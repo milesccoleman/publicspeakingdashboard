@@ -78,21 +78,20 @@ export default {
 				this.output =  this.wordsSpoken += interimTranscript
 				this.wordCount = this.countWords(this.output)
 				this.totalWords = this.wordCount
-				}
-		
-				if (this.stop == false) {
-					this.initialTime = Date.now();
-					recognition.start()
-					this.grabTimeInterval = window.setInterval(this.grabTime, 1000)
-					this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
-				} 
-				if (this.stop == true) {
-					recognition.stop()
-					this.stop = false
-					console.log("stopped?")
-					this.continuous = true
-		
-				}
+			}
+			recognition.start()
+					if (this.stop == false) {
+						this.initialTime = Date.now();
+						this.grabTimeInterval = window.setInterval(this.grabTime, 1000)
+						this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
+					} 
+					if (this.stop == true) {
+						recognition.stop()
+						this.stop = false
+						console.log("stopped?")
+						this.continuous = true
+	
+					}
 		},
 	
 		grabTime: function () {
