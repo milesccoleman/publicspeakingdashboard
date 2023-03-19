@@ -43,7 +43,7 @@ export default {
 			wordCountDividedByTime: 0,
 			stop: false, 
 			wpm: 0, 
-			coninuous: true
+			continuous: true
 		}
 	},
 	
@@ -87,7 +87,7 @@ export default {
 					this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
 				} 
 				if (this.stop == true) {
-					recognition.abort()
+					recognition.stop()
 					this.stop = false
 					console.log("stopped?")
 					this.continuous = true
