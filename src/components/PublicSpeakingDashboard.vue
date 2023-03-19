@@ -13,7 +13,8 @@
 		{{ wpm }} <br>
 		Overall Average Words Per Minute
     </p>
-    <button v-on:click="initiateVoiceControl">Start</button>    
+    <span><button v-on:click="initiateVoiceControl">Start</button><button v-on:click="stopVoiceControl">Stop</button><button v-on:click="reset">Reset</button></span>
+    
     <p id="output">
       {{ output }}
     </p>
@@ -31,6 +32,8 @@ export default {
 			msg: 'Public Speaking Dashboard', 
 			wordsSpoken: '', 
 			output: 'Recognized Text',
+			grabTimeInterval: '', 
+			registerWPMInterval: '', 
 			initialTime: 0,  
 			time: 0,
 			timeElapsed: 0, 
@@ -38,8 +41,16 @@ export default {
 			wordCount: 0,
 			totalWords: 0, 
 			wordCountDividedByTime: 0,
-			wpm: 0
+			stop: false, 
+			wpm: 0, 
+			coninuous: true
 		}
+	},
+	
+	created: function () {
+		window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+		let recognition = new window.SpeechRecognition();
+		recognition.start()
 	}, 
 
 	methods: {
@@ -49,9 +60,9 @@ export default {
 			window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
 			let finalTranscript = '';
 			let recognition = new window.SpeechRecognition();
-			recognition.interimResults = true;
+			recognition.interimResults = true; 
 			recognition.maxAlternatives = 10;
-			recognition.continuous = true;
+			recognition.continuous = this.continuous;
 			recognition.onresult = (event) => {
 				let interimTranscript = '';
 				for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
@@ -68,29 +79,35 @@ export default {
 				this.wordCount = this.countWords(this.output)
 				this.totalWords = this.wordCount
 				}
-		this.initialTime = Date.now();
-		this.grabTime()
-		recognition.start()
-		window.setInterval(this.grabTime, 1000)
-		window.setInterval(this.registerWPM, 1000)
+		
+				if (this.stop == false) {
+					this.initialTime = Date.now();
+					recognition.start()
+					this.grabTimeInterval = window.setInterval(this.grabTime, 1000)
+					this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
+				} 
+				if (this.stop == true) {
+					recognition.abort()
+					this.stop = false
+					console.log("stopped?")
+					this.continuous = true
+		
+				}
 		},
 	
 		grabTime: function () {
-			
-				
-					this.timeDifference = Date.now() - this.initialTime;
-					var formatted = convertTime(this.timeDifference);
-					document.getElementById('timer').innerHTML = '' + formatted;
-					this.timeElapsed = this.timeDifference
-					console.log("og time elapsed " + this.timeElapsed)
-					return this.timeElapsed
-				
-				function convertTime(miliseconds) {
-					var totalSeconds = Math.floor(miliseconds/1000);
-					var minutes = Math.floor(totalSeconds/60);
-					var seconds = totalSeconds - minutes * 60;
-					return minutes + ':' + seconds;
-				}
+			this.timeDifference = Date.now() - this.initialTime;
+			var formatted = convertTime(this.timeDifference);
+			document.getElementById('timer').innerHTML = '' + formatted;
+			this.timeElapsed = this.timeDifference
+			console.log("og time elapsed " + this.timeElapsed)
+			return this.timeElapsed
+			function convertTime(miliseconds) {
+				var totalSeconds = Math.floor(miliseconds/1000);
+				var minutes = Math.floor(totalSeconds/60);
+				var seconds = totalSeconds - minutes * 60;
+				return minutes + ':' + seconds;
+			}
 		},
 		
 		
@@ -101,12 +118,21 @@ export default {
 		}, 
 		
 		registerWPM: function () {
-		this.wpm = Math.round(this.wordCount/(this.timeElapsed/1000) * 60) 
+			this.wpm = Math.round(this.wordCount/(this.timeElapsed/1000) * 60) 
 			console.log("time elapsed " + this.timeElapsed)	
 			console.log("word count " + this.wordCount)
-			
-			
-			
+		}, 
+		
+		stopVoiceControl: function () {
+			this.continuous = false
+			this.stop = true
+			this.initiateVoiceControl()
+			clearInterval(this.grabTimeInterval)
+			clearInterval(this.registerWPMInterval)
+		}, 
+	
+		reset: function () {
+			location.reload()
 		}
 	
 	
