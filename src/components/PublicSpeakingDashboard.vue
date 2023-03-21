@@ -3,15 +3,24 @@
     <h1>{{ msg }}</h1>
     <p id="timer">
 		{{ time }} <br>
-		Time
+		<b>Time</b>
     </p>
     <p id="totalWords">
 		{{ totalWords }} <br>
-		Total Words Detected
+		<b>Total Words Detected</b>
     </p>
      <p id="wpm">
 		{{ wpm }} <br>
-		Overall Average Words Per Minute
+		<b>Overall Average Words Per Minute</b>
+    </p>
+        <p id="emotion">
+		Anger: {{ this.anger }} <br>
+		Fear: {{ this.fear}} <br>
+		Excitement: {{ this.excitement }} <br>
+		Boredom: {{ this.boredom}} <br>
+		Sadness: {{ this.sadness}} <br>
+		Happiness: {{ this.happiness }}<br>
+		<b>Emotion (out of 100)</b>
     </p>
     <span><button v-on:click="initiateVoiceControl">Start</button><button v-on:click="stopVoiceControl">Stop</button><button v-on:click="reset">Reset</button></span>
     
@@ -23,6 +32,7 @@
 </template>
 
 <script>
+import paralleldots from 'paralleldots'
 export default {
   name: 'publicSpeakingDashboard',
   props: {
@@ -33,7 +43,8 @@ export default {
 			wordsSpoken: '', 
 			output: 'Recognized Text',
 			grabTimeInterval: '', 
-			registerWPMInterval: '', 
+			registerWPMInterval: '',
+			getEmotionStatsInterval: '',  
 			initialTime: 0,  
 			time: 0,
 			timeElapsed: 0, 
@@ -42,12 +53,19 @@ export default {
 			totalWords: 0, 
 			wordCountDividedByTime: 0,
 			stop: false, 
-			wpm: 0, 
+			wpm: 0,
+			anger: '', 
+			fear: '', 
+			excitement: '', 
+			boredom: '', 
+			sadness: '', 
+			happiness: '', 
 			continuous: true
 		}
 	},
 	
 	created: function () {
+	//initiate speech recognition and ask for microphone permission
 		window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
 		let recognition = new window.SpeechRecognition();
 		recognition.start()
@@ -56,6 +74,7 @@ export default {
 	methods: {
 	
 		initiateVoiceControl: function () {
+		//start listening for words and making a transcript of detected words
 			console.log('voice recognition initiated')
 			window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
 			let finalTranscript = '';
@@ -73,7 +92,6 @@ export default {
 						interimTranscript += transcript;
 					}
 				}
-				console.log("transcript: " + interimTranscript)
 				this.wordsSpoken = finalTranscript
 				this.output =  this.wordsSpoken += interimTranscript
 				this.wordCount = this.countWords(this.output)
@@ -81,25 +99,28 @@ export default {
 			}
 			recognition.start()
 					if (this.stop == false) {
+						console.log("app started")
 						this.initialTime = Date.now();
 						this.grabTimeInterval = window.setInterval(this.grabTime, 1000)
 						this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
+						this.getEmotionStatsInterval = window.setInterval(this.getEmotionStats, 5000)
 					} 
 					if (this.stop == true) {
 						recognition.stop()
 						this.stop = false
-						console.log("stopped?")
 						this.continuous = true
+						console.log("app stopped")
 	
 					}
 		},
 	
 		grabTime: function () {
+		//keep track of time in both milliseconds as well as minutes and seconds
 			this.timeDifference = Date.now() - this.initialTime;
 			var formatted = convertTime(this.timeDifference);
 			document.getElementById('timer').innerHTML = '' + formatted;
+			console.log(formatted)
 			this.timeElapsed = this.timeDifference
-			console.log("og time elapsed " + this.timeElapsed)
 			return this.timeElapsed
 			function convertTime(miliseconds) {
 				var totalSeconds = Math.floor(miliseconds/1000);
@@ -109,25 +130,45 @@ export default {
 			}
 		},
 		
-		
-		
 		countWords: function (str){
+		//count how many words are in the transcript of detected words
 			const arr = str.split(' ');
 			return arr.filter(word => word !== '').length;
 		}, 
 		
 		registerWPM: function () {
+		//calculate number of words per minute--at one second intervals
 			this.wpm = Math.round(this.wordCount/(this.timeElapsed/1000) * 60) 
-			console.log("time elapsed " + this.timeElapsed)	
-			console.log("word count " + this.wordCount)
-		}, 
+		},
+		
+		getEmotionStats: function () {
+		//send transcript data to be evaluated as per emotional content
+			paralleldots.apiKey = "hL7rOIhghKLZtrI6w04cFjxVvAOHQ7BiNhjMLAVnMPw";
+			paralleldots.emotion(this.wordsSpoken,"en")
+			.then((response) => {
+				let obj = JSON.parse(response)
+				this.anger = Math.round(obj.emotion.Angry * 100) 
+				this.fear = Math.round(obj.emotion.Fear * 100) 
+				this.excitement = Math.round(obj.emotion.Excited * 100)
+				this.boredom = Math.round(obj.emotion.Bored * 100)
+				this.sadness = Math.round(obj.emotion.Sad * 100)
+				this.happiness = Math.round(obj.emotion.Happy * 100)
+				console.log("emotion data retrieved" + response)
+			})
+				.catch((error) => {
+				console.log(error);
+			})
+		
+		},  
 		
 		stopVoiceControl: function () {
+		//reset speech recognition so it can stop and clear original timers
 			this.continuous = false
 			this.stop = true
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
 			clearInterval(this.registerWPMInterval)
+			clearInterval(this.getEmotionStatsInterval)
 		}, 
 	
 		reset: function () {
