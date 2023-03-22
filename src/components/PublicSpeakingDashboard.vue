@@ -143,8 +143,9 @@ export default {
 		
 		getEmotionStats: function () {
 		//send transcript data to be evaluated as per emotional content
-			paralleldots.apiKey = "hL7rOIhghKLZtrI6w04cFjxVvAOHQ7BiNhjMLAVnMPw";
-			paralleldots.emotion(this.wordsSpoken,"en")
+			const pd = require('paralleldots' || paralleldots)
+			pd.apiKey = "hL7rOIhghKLZtrI6w04cFjxVvAOHQ7BiNhjMLAVnMPw";
+			pd.emotion(this.wordsSpoken,"en")
 			.then((response) => {
 				let obj = JSON.parse(response)
 				this.anger = Math.round(obj.emotion.Angry * 100) 
