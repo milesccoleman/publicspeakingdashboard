@@ -2,7 +2,10 @@
   <div class="dashboard">
     <h1 >{{ msg }}</h1>
 		<p v-if="show">
-			Public speaking dashboard is an AI-powered tool to help you reflect on your own public speaking and hone your public speaking skills. Click the start button below to begin.
+			{{ msg2 }} 
+		</p>
+		<p v-if="show">
+			{{ msg3 }} 
 		</p>
     <p v-if="!show2" id="timer">
 		{{ time }} <br>
@@ -25,7 +28,7 @@
 		Happiness: {{ this.happiness }}<br>
 		<b>Emotion (out of 100)</b>
     </p>
-    <span><button v-if="show" v-on:click="initiateVoiceControl">Start</button><button v-if="!show2" v-on:click="stopVoiceControl">Stop</button><button v-if="!show2" v-on:click="reset">Reset</button></span><br>
+    <span><button v-if="show3" v-on:click="begin">Begin</button><button v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button v-if="!show2" v-on:click="stopVoiceControl">Stop</button><button v-if="!show2" v-on:click="reset">Reset</button></span><br>
     <span><button  v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span><br>
      <span><button v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
     <p v-if="!show2" id="output">
@@ -43,7 +46,9 @@ export default {
   }, 
   data () {
 		return {
-			msg: 'Public Speaking Dashboard', 
+			msg: 'Public Speaking Dashboard',
+			msg2: "An AI-powered tool to help you reflect on your own public speaking and hone your public speaking skills.",
+			msg3: "Click the button to begin.",
 			wordsSpoken: '', 
 			output: 'Recognized Text',
 			grabTimeInterval: '', 
@@ -66,7 +71,9 @@ export default {
 			happiness: '', 
 			continuous: true, 
 			show: true, 
-			show2: true
+			show2: true, 
+			show3: true, 
+			show4: true
 		}
 	},
 	
@@ -79,8 +86,19 @@ export default {
 
 	methods: {
 	
-		initiateVoiceControl: function () {
+		begin: function () {
 			this.show = false
+			this.show3 = false
+			this.msg2 = ''
+		},
+		
+		selectOption: function () {
+			this.show = true
+			this.show2 = false
+			this.show4 = false			
+		},
+	
+		initiateVoiceControl: function () {
 		//start listening for words and making a transcript of detected words
 			console.log('voice recognition initiated')
 			window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
@@ -119,13 +137,6 @@ export default {
 						console.log("app stopped")
 	
 					}
-		},
-		
-		selectOption: function () {
-			this.show2 = false
-			this.show = true
-			
-		
 		},
 	
 		grabTime: function () {
@@ -188,7 +199,6 @@ export default {
 	
 		reset: function () {
 			location.reload()
-			this.show = true
 		}
 	
 	
@@ -202,10 +212,10 @@ export default {
 <style scoped>
 .optionsButton {
 height: 150px;
-width: 100px; 
-border: none;
+width: 150px; 
 padding: 12px; 
-font-size: 20px; 
+font-size: 25px; 
+margin: 20px
 
 }
 
