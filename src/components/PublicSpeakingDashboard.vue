@@ -1,36 +1,43 @@
 <template>
   <div class="dashboard">
     <h1 >{{ msg }}</h1>
-		<p v-if="show">
+		<p>
 			{{ msg2 }} 
 		</p>
-		<p v-if="show">
+		<p>
 			{{ msg3 }} 
 		</p>
-    <p v-if="!show2" id="timer">
+    <p v-if="!showWPM" id="timer">
 		{{ time }} <br>
 		<b>Time</b>
     </p>
-    <p v-if="!show2" id="totalWords"> 
+    <p v-if="!showWPM" id="totalWords"> 
 		{{ totalWords }} <br>
 		<b>Total Words Detected</b>
     </p>
-     <p v-if="!show2" id="wpm">
+     <p v-if="!showWPM" id="wpm">
 		{{ wpm }} <br>
 		<b>Overall Average Words Per Minute</b>
     </p>
-        <p  v-if="!show2" id="emotion">
+    <p  v-if="!showTextEmotion" id="emotion">
 		Anger: {{ this.anger }} <br>
 		Fear: {{ this.fear}} <br>
 		Excitement: {{ this.excitement }} <br>
 		Boredom: {{ this.boredom}} <br>
 		Sadness: {{ this.sadness}} <br>
 		Happiness: {{ this.happiness }}<br>
-		<b>Emotion (out of 100)</b>
+		<b>Text Emotion (out of 100)</b>
+    </p>
+    <p  v-if="!showVoiceEmotion" id="voiceEmotion">
+		<b>Voice Analysis Placeholder</b>
+    </p>
+    <p  v-if="!showFaceEmotion" id="voiceEmotion">
+		<b>Face Analysis Placeholder</b>
     </p>
     <span><button v-if="show3" v-on:click="begin">Begin</button><button v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button v-if="!show2" v-on:click="stopVoiceControl">Stop</button><button v-if="!show2" v-on:click="reset">Reset</button></span><br>
-    <span><button  v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span><br>
-     <span><button v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-if="!show" v-on:click="selectOption" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
+    <span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span><br>
+	<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
+	<br><button v-if="!show" v-on:click="next">Next</button>
     <p v-if="!show2" id="output">
       {{ output }}
     </p>
@@ -48,7 +55,7 @@ export default {
 		return {
 			msg: 'Public Speaking Dashboard',
 			msg2: "An AI-powered tool to help you reflect on your own public speaking and hone your public speaking skills.",
-			msg3: "Click the button to begin.",
+			msg3: "",
 			wordsSpoken: '', 
 			output: 'Recognized Text',
 			grabTimeInterval: '', 
@@ -73,7 +80,19 @@ export default {
 			show: true, 
 			show2: true, 
 			show3: true, 
-			show4: true
+			show4: true,
+			showWPM: true,  
+			WPMSelected: false,
+			WPMColor: 'lightgray',  
+			showTextEmotion: true, 
+			textEmotionSelected: false, 
+			textEmotionColor: 'lightgray', 
+			showVoiceEmotion: true, 
+			voiceEmotionSelected: false, 
+			voiceEmotionColor: 'lightgray', 
+			showFaceEmotion: true, 
+			faceEmotionSelected: false, 
+			faceEmotionColor: 'lightgray'
 		}
 	},
 	
@@ -90,12 +109,54 @@ export default {
 			this.show = false
 			this.show3 = false
 			this.msg2 = ''
+			this.msg3 = 'Select the data you would like to track.'
 		},
 		
-		selectOption: function () {
-			this.show = true
+		next: function () {
 			this.show2 = false
-			this.show4 = false			
+			this.show4 = false
+			this.show = true
+			this.msg3 = ''
+			
+			if (this.WPMSelected == true)	 {
+				this.showWPM = false
+			}	
+			
+			if (this.textEmotionSelected == true)	 {
+				this.showTextEmotion = false
+			}	
+			
+			if (this.voiceEmotionSelected == true)	 {
+				this.showVoiceEmotion = false
+			}	
+			
+			if (this.faceEmotionSelected == true)	 {
+				this.showFaceEmotion = false
+			}
+			
+			if (this.textEmotionSelected == false && this.WPMSelected == false)	 {
+				this.msg2 = 'No input data selected. Please click "reset"and start over.'
+			}	
+		},
+		
+		selectWPM: function () {
+			this.WPMSelected = true
+			this.WPMColor = 'lightgreen'
+		},
+		
+		selectTextEmotion: function () {
+			this.textEmotionSelected = true
+			this.textEmotionColor = 'lightgreen'
+		},
+		
+		selectVoiceEmotion: function () {
+			this.voiceEmotionSelected = true
+			this.voiceEmotionColor = 'lightgreen'
+		},
+		
+		selectFaceEmotion: function () {
+			this.faceEmotionSelected = true
+			this.faceEmotionColor = 'lightgreen'
 		},
 	
 		initiateVoiceControl: function () {
