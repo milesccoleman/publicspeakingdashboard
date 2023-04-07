@@ -1,25 +1,25 @@
 <template>
   <div class="dashboard">
-    <h1 >{{ msg }}</h1>
-		<p>
+    <h1 id="mainTitle">{{ msg }} </h1>
+		<p id="messageTwo">
 			{{ msg2 }} 
 		</p>
-		<p>
+		<p id="messageThree">
 			{{ msg3 }} 
 		</p>
-    <p v-if="!showWPM" id="timer">
+    <p v-if="!showWPM" class="title" id="timer">
 		{{ time }} <br>
 		<b>Time</b>
     </p>
-    <p v-if="!showWPM" id="totalWords"> 
+    <p v-if="!showWPM" class="title" id="totalWords"> 
 		{{ totalWords }} <br>
 		<b>Total Words Detected</b>
     </p>
-     <p v-if="!showWPM" id="wpm">
+     <p class="title" v-if="!showWPM" id="wpm">
 		{{ wpm }} <br>
 		<b>Overall Average Words Per Minute</b>
     </p>
-    <p  v-if="!showTextEmotion" id="emotion">
+    <p  v-if="!showTextEmotion" class="title" id="emotion">
 		Anger: {{ this.anger }} <br>
 		Fear: {{ this.fear}} <br>
 		Excitement: {{ this.excitement }} <br>
@@ -28,16 +28,16 @@
 		Happiness: {{ this.happiness }}<br>
 		<b>Text Emotion (out of 100)</b>
     </p>
-    <p  v-if="!showVoiceEmotion" id="voiceEmotion">
+    <p  v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
 		<b>Voice Analysis Placeholder</b>
     </p>
-    <p  v-if="!showFaceEmotion" id="voiceEmotion">
+    <p  v-if="!showFaceEmotion" class="title" id="voiceEmotion">
 		<b>Face Analysis Placeholder</b>
     </p>
-    <span><button v-if="show3" v-on:click="begin">Begin</button><button v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button v-if="!show2" v-on:click="stopVoiceControl">Stop</button><button v-if="!show2" v-on:click="reset">Reset</button></span><br>
+    <span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><br><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
     <span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span><br>
 	<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
-	<br><button v-if="!show" v-on:click="next">Next</button>
+	<br><button id="next" v-if="!show" v-on:click="next">Next</button>
     <p v-if="!show2" id="output">
       {{ output }}
     </p>
@@ -83,16 +83,16 @@ export default {
 			show4: true,
 			showWPM: true,  
 			WPMSelected: false,
-			WPMColor: 'lightgray',  
+			WPMColor: '#CBC3E3',  
 			showTextEmotion: true, 
 			textEmotionSelected: false, 
-			textEmotionColor: 'lightgray', 
+			textEmotionColor: '#CBC3E3', 
 			showVoiceEmotion: true, 
 			voiceEmotionSelected: false, 
-			voiceEmotionColor: 'lightgray', 
+			voiceEmotionColor: '#CBC3E3', 
 			showFaceEmotion: true, 
 			faceEmotionSelected: false, 
-			faceEmotionColor: 'lightgray'
+			faceEmotionColor: '#CBC3E3'
 		}
 	},
 	
@@ -271,17 +271,103 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.optionsButton {
+div {
+background-color: #123b52; 
+color: rgb(198, 113, 160)
+}
+.optionsButton  {
 height: 150px;
 width: 150px; 
 padding: 12px; 
 font-size: 25px; 
-margin: 20px
-
+margin: 20px;
+border: none; 
+font-weight: bold; 
+color: black; 
+font-family: Arial, sans-serif;
 }
 
+.title {
+color: white; 
+}
 #optionWPM {
+background-color: #CBC3E3; 
+}
+#messageTwo {
+color: white
+}
+#messageThree {
+color: white
+}
+#begin {
+background-color: #CBC3E3; 
+border: none; 
+height: 50px; 
+width: 100px; 
+font-weight: bold; 
+color: black; 
+font-family: Arial, sans-serif;
+font-size: 20px; 
+margin-top: 40px; 
+margin-bottom: -20px; 
+}
 
+#start {
+background-color: #CBC3E3; 
+border: none; 
+height: 50px; 
+width: 100px; 
+font-weight: bold; 
+color: black; 
+font-family: Arial, sans-serif;
+font-size: 20px; 
+margin: 10px; 
+}
+
+#stop {
+background-color: #CBC3E3; 
+border: none; 
+height: 50px; 
+width: 100px; 
+font-weight: bold; 
+color: black; 
+font-family: Arial, sans-serif;
+font-size: 20px; 
+margin: 10px; 
+}
+
+#reset {
+background-color: #CBC3E3; 
+border: none; 
+height: 25px; 
+width: 50px; 
+font-weight: bold; 
+color: black; 
+font-family: Arial, sans-serif;
+font-size: 12px; 
+margin: 10px; 
+}
+
+#next {
+background-color: #CBC3E3; 
+border: none; 
+height: 50px; 
+width: 100px; 
+font-weight: bold; 
+color: black; 
+font-family: Arial, sans-serif;
+font-size: 20px; 
+margin-top: 40px; 
+margin-bottom: -20px; 
+}
+
+#output {
+color: black; 
+background-color: white 
+}
+
+#begin:hover {
+background-color: lightgray; 
 }
 
 h3 {
