@@ -140,23 +140,55 @@ export default {
 		},
 		
 		selectWPM: function () {
-			this.WPMSelected = true
-			this.WPMColor = 'lightgreen'
+		
+			if (this.WPMSelected == false) {
+				this.WPMSelected = true
+				this.WPMColor = 'lightgreen'
+			}
+			
+			else {
+				this.WPMSelected = false
+				this.WPMColor = '#CBC3E3'
+			}
 		},
 		
 		selectTextEmotion: function () {
-			this.textEmotionSelected = true
-			this.textEmotionColor = 'lightgreen'
+		
+			if (this.textEmotionSelected == false) {
+				this.textEmotionSelected = true
+				this.textEmotionColor = 'lightgreen'
+			}
+			
+			else {
+				this.textEmotionSelected = false
+				this.textEmotionColor = '#CBC3E3'
+			}
 		},
 		
 		selectVoiceEmotion: function () {
-			this.voiceEmotionSelected = true
-			this.voiceEmotionColor = 'lightgreen'
+		
+			if (this.voiceEmotionSelected == false) {
+				this.voiceEmotionSelected = true
+				this.voiceEmotionColor = 'lightgreen'
+			}
+			
+			else {
+				this.voiceEmotionSelected = false
+				this.voiceEmotionColor = '#CBC3E3'
+			}
 		},
 		
 		selectFaceEmotion: function () {
-			this.faceEmotionSelected = true
-			this.faceEmotionColor = 'lightgreen'
+		
+			if (this.faceEmotionSelected == false) {
+				this.faceEmotionSelected = true
+				this.faceEmotionColor = 'lightgreen'
+			}
+			
+			else {
+				this.faceEmotionSelected = false
+				this.faceEmotionColor = '#CBC3E3'
+			}
 		},
 	
 		initiateVoiceControl: function () {
