@@ -16,10 +16,12 @@
 		<b>Total Words Detected</b>
     </p>
      <p class="title" v-if="!showWPM" id="wpm">
+     <img class="chartWindow" id="WPM" src="WPM.png">
 		{{ wpm }} <br>
 		<b>Overall Average Words Per Minute</b>
     </p>
     <p  v-if="!showTextEmotion" class="title" id="emotion">
+    <img class="chartWindow" id="textEmotion" src="textEmotions.png"><br>
 		Anger: {{ this.anger }} <br>
 		Fear: {{ this.fear}} <br>
 		Excitement: {{ this.excitement }} <br>
@@ -29,9 +31,11 @@
 		<b>Text Emotion (out of 100)</b>
     </p>
     <p  v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
+    <img class="chartWindow" id="voiceEmotion" src="faceEmotions.png"><br>
 		<b>Voice Analysis Placeholder</b>
     </p>
     <p  v-if="!showFaceEmotion" class="title" id="voiceEmotion">
+    <img class="chartWindow" id="faceEmotion" src="faceEmotions.png"><br>
 		<b>Face Analysis Placeholder</b>
     </p>
     <span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><br><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
@@ -306,6 +310,11 @@ export default {
 div {
 background-color: #123b52; 
 color: rgb(198, 113, 160)
+}
+.chartWindow {
+height: 250px; 
+position: relative;
+
 }
 .optionsButton  {
 height: 150px;
