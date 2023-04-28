@@ -1,17 +1,16 @@
 <template>
   <div class="dashboard">
-    <h1 id="mainTitle">{{ msg }} </h1>
+    <h1 id="mainTitle"> <img id="talking" alt="image of voice waves leaving someone's mouth. Attribution: Speak Icon, by Voysla, 'https://www.flaticon.com/free-icons/speak'" src="talking.png"> {{ msg }} </h1>
 		<p id="messageTwo">
 			{{ msg2 }} 
 		</p>
-		<p id="messageThree">
+		<p id="messageThree"> 
 			{{ msg3 }} 
 		</p>
 		<p v-if="!showWPM" class="title" id="timer">
 		{{ time }} <br>
 		<b>Time</b>
 		</p>
-		
 		<!--EMOTION FEEDBACK SECTION-->
 		
 		<!--TODO: explore gridding in vue-->
@@ -334,7 +333,7 @@ export default {
 <style scoped>
 div {
 background-color: none; 
-color: rgb(198, 113, 160); 
+color: #71c68b; 
 
 }
 .chartWindow {
@@ -361,13 +360,13 @@ color: white;
 background-color: #CBC3E3; 
 }
 #messageTwo {
-color: white
+color: #f48d79
 }
 #messageThree {
 color: white
 }
 #begin {
-background-color: #CBC3E3; 
+background-color: #7766c6; 
 border: none; 
 height: 50px; 
 width: 100px; 
@@ -450,5 +449,11 @@ li {
 }
 a {
   color: #42b983;
+}
+#talking {
+height: 100px; 
+margin-bottom: -20px; 
+-webkit-filter: invert(1);
+   filter: invert(1);
 }
 </style>
