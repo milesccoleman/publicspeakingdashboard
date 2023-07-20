@@ -81,7 +81,8 @@ export default {
 			msg3: "",
 			wordsSpoken: '', 
 			output: 'Recognized Text',
-			workingOutpu: '', 
+			workingOutpu: '',
+			workingTime: 0, 
 			grabTimeInterval: '', 
 			registerWPMInterval: '',
 			getEmotionStatsInterval: '',  
@@ -230,13 +231,19 @@ export default {
 					let transcript = event.results[i][0].transcript;
 					if (event.results[i].isFinal) {
 						finalTranscript += transcript;
+						if (this.workingTime) {
+						this.workingOutput = transcript
+						var node = document.createElement('li');
+						node.appendChild(document.createTextNode(this.workingTime + ": " + "" + this.workingOutput));
+						document.querySelector('ul').appendChild(node);
+						this.workingOutput = ""
+			}
 					} else {
 						interimTranscript += transcript;
 					}
 				}
 				this.wordsSpoken = finalTranscript
 				this.output =  this.wordsSpoken += interimTranscript
-				this.workingOutput = interimTranscript
 				this.wordCount = this.countWords(this.output)
 				this.totalWords = this.wordCount
 				
@@ -266,14 +273,9 @@ export default {
 			this.timeDifference = Date.now() - this.initialTime;
 			var formatted = convertTime(this.timeDifference);
 			document.getElementById('timer').innerHTML = '' + formatted;
+			this.workingTime = formatted; 
 			console.log(formatted)
-			
-			if (this.workingOutput) {
-			var node = document.createElement('li');
-			node.appendChild(document.createTextNode(formatted + ":" + "" + this.workingOutput));
-			document.querySelector('ul').appendChild(node);
-			this.workingOutput = ""
-			}
+		
 			this.timeElapsed = this.timeDifference
 			return this.timeElapsed
 			function convertTime(miliseconds) {
@@ -443,6 +445,7 @@ margin: auto;
 color: hotpink; 
 background-color: black; 
 width: 50%;  
+text-align: left; 
 
 }
 
