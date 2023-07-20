@@ -11,31 +11,38 @@
 		{{ time }} <br>
 		<b>Time</b>
 		</p>
+		<br><span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><br><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
+		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span><br>
+		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
+		<br><button id="next" v-if="!show" v-on:click="next">Next</button>
+		<ul v-if="!show2" id="output">
+		{{ output }}
+		</ul>
 		<!--EMOTION FEEDBACK SECTION-->
 		
 		<!--TODO: explore gridding in vue-->
+		
 		<span id="voiceAndFace">
-		<p  v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
-			<img class="chartWindow" id="voiceEmotion" src="faceEmotions.png"><br>
-		<b>Voice Analysis Placeholder</b>
-		<!--add waveform-->
-		</p>
-		<p  v-if="!showFaceEmotion" class="title" id="voiceEmotion">
-			<img class="chartWindow" id="faceEmotion" src="faceEmotions.png"><br>
-		<b>Face Analysis Placeholder</b>
-		<!--add video feedback-->
-		</p>
-
-		<p  v-if="!showTextEmotion" class="title" id="emotion">
-		<img class="chartWindow" id="textEmotion" src="textEmotions.png"><br>
+		<p  v-if="!showTextEmotion" class="title" id="textEmotion">
 		Anger: {{ this.anger }} <br>
 		Fear: {{ this.fear}} <br>
 		Excitement: {{ this.excitement }} <br>
 		Boredom: {{ this.boredom}} <br>
 		Sadness: {{ this.sadness}} <br>
 		Happiness: {{ this.happiness }}<br>
+		<img class="chartWindow" src="textEmotions.png"><br>
 		<b>Text Emotion (out of 100)</b>
-    </p>		
+		</p>
+		<p  v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
+			<img class="chartWindow" id="voiceEmotion" src="faceEmotions.png"><br>
+		<b>Voice Analysis Placeholder</b>
+		<!--add waveform-->
+		</p>
+		<p  v-if="!showFaceEmotion" class="title" id="faceEmotion">
+			<img class="chartWindow" id="faceEmotion" src="faceEmotions.png"><br>
+		<b>Face Analysis Placeholder</b>
+		<!--add video feedback-->
+		</p>		
     </span>
 <!-- 
     <p v-if="!showWPM" class="title" id="totalWords"> 
@@ -58,14 +65,6 @@
 	<!--TODO: Dynamics - attack - decay - volume-->
 
 
-    <span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><br><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
-    <span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span><br>
-	<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
-	<br><button id="next" v-if="!show" v-on:click="next">Next</button>
-    <p v-if="!show2" id="output">
-      {{ output }}
-    </p>
-
   </div>
 </template>
 
@@ -82,6 +81,7 @@ export default {
 			msg3: "",
 			wordsSpoken: '', 
 			output: 'Recognized Text',
+			workingOutpu: '', 
 			grabTimeInterval: '', 
 			registerWPMInterval: '',
 			getEmotionStatsInterval: '',  
@@ -236,6 +236,7 @@ export default {
 				}
 				this.wordsSpoken = finalTranscript
 				this.output =  this.wordsSpoken += interimTranscript
+				this.workingOutput = interimTranscript
 				this.wordCount = this.countWords(this.output)
 				this.totalWords = this.wordCount
 				
@@ -266,6 +267,13 @@ export default {
 			var formatted = convertTime(this.timeDifference);
 			document.getElementById('timer').innerHTML = '' + formatted;
 			console.log(formatted)
+			
+			if (this.workingOutput) {
+			var node = document.createElement('li');
+			node.appendChild(document.createTextNode(formatted + ":" + "" + this.workingOutput));
+			document.querySelector('ul').appendChild(node);
+			this.workingOutput = ""
+			}
 			this.timeElapsed = this.timeDifference
 			return this.timeElapsed
 			function convertTime(miliseconds) {
@@ -331,6 +339,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#textEmotion, #faceEmotion, #voiceEmotion, #wpm {
+display: inline-block; 
+}
 div {
 background-color: none; 
 color: #71c68b; 
@@ -428,8 +439,11 @@ margin-bottom: -20px;
 }
 
 #output {
-color: black; 
-background-color: white 
+margin: auto; 
+color: hotpink; 
+background-color: black; 
+width: 50%;  
+
 }
 
 #begin:hover {
