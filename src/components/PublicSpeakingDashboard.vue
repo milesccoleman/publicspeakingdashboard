@@ -16,7 +16,6 @@
 		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
 		<br><button id="next" v-if="!show" v-on:click="next">Next</button>
 		<ul v-if="!show2" id="output">
-		{{ output }}
 		</ul>
 		<!--EMOTION FEEDBACK SECTION-->
 		
@@ -237,6 +236,9 @@ export default {
 						node.appendChild(document.createTextNode(this.workingTime + ": " + "" + this.workingOutput));
 						document.querySelector('ul').appendChild(node);
 						this.workingOutput = ""
+						var elem = document.getElementById('output');
+						elem.scrollTop = elem.scrollHeight;
+						
 			}
 					} else {
 						interimTranscript += transcript;
@@ -270,12 +272,13 @@ export default {
 	
 		grabTime: function () {
 		//keep track of time in both milliseconds as well as minutes and seconds
+			
 			this.timeDifference = Date.now() - this.initialTime;
 			var formatted = convertTime(this.timeDifference);
 			document.getElementById('timer').innerHTML = '' + formatted;
 			this.workingTime = formatted; 
 			console.log(formatted)
-		
+			
 			this.timeElapsed = this.timeDifference
 			return this.timeElapsed
 			function convertTime(miliseconds) {
@@ -446,7 +449,8 @@ color: hotpink;
 background-color: black; 
 width: 50%;  
 text-align: left; 
-
+overflow: scroll; 
+height: 200px; 
 }
 
 #begin:hover {
