@@ -12,7 +12,7 @@
 		<b>Time</b>
 		</p>
 		<br><span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><br><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
-		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span><br>
+		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span>
 		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
 		<br><button id="next" v-if="!show" v-on:click="next">Next</button>
 		<ul v-if="!show2" id="output">
@@ -76,7 +76,7 @@ export default {
   data () {
 		return {
 			msg: 'Public Speaking Dashboard',
-			msg2: "An AI-powered tool to help you reflect on your own public speaking and hone your public speaking skills.",
+			msg2: "An AI-powered tool to help you hone your public speaking skills.",
 			msg3: "",
 			wordsSpoken: '', 
 			output: 'Recognized Text',
@@ -159,7 +159,7 @@ export default {
 			}
 			
 			if (this.textEmotionSelected == false && this.WPMSelected == false)	 {
-				this.msg2 = 'No input data selected. Please click "reset"and start over.'
+				this.msg2 = 'No input data selected. Click "reset"and start over. (Try selecting WPM or another parameter.)'
 			}	
 		},
 		
@@ -167,7 +167,7 @@ export default {
 		
 			if (this.WPMSelected == false) {
 				this.WPMSelected = true
-				this.WPMColor = 'lightgreen'
+				this.WPMColor = 'lawngreen'
 			}
 			
 			else {
@@ -180,7 +180,7 @@ export default {
 		
 			if (this.textEmotionSelected == false) {
 				this.textEmotionSelected = true
-				this.textEmotionColor = 'lightgreen'
+				this.textEmotionColor = 'lawngreen'
 			}
 			
 			else {
@@ -193,7 +193,7 @@ export default {
 		
 			if (this.voiceEmotionSelected == false) {
 				this.voiceEmotionSelected = true
-				this.voiceEmotionColor = 'lightgreen'
+				this.voiceEmotionColor = 'lawngreen'
 			}
 			
 			else {
@@ -206,7 +206,7 @@ export default {
 		
 			if (this.faceEmotionSelected == false) {
 				this.faceEmotionSelected = true
-				this.faceEmotionColor = 'lightgreen'
+				this.faceEmotionColor = 'lawngreen'
 			}
 			
 			else {
@@ -376,10 +376,12 @@ color: white;
 background-color: #CBC3E3; 
 }
 #messageTwo {
-color: #f48d79
+color: #f48d79; 
+font-size: 25px; 
 }
 #messageThree {
-color: white
+color: white; 
+font-size: 25px; 
 }
 #begin {
 background-color: #7766c6; 
@@ -394,6 +396,10 @@ margin-top: 40px;
 margin-bottom: -20px; 
 }
 
+#begin:hover {
+background-color: lightgray; 
+}
+
 #start {
 background-color: #CBC3E3; 
 border: none; 
@@ -404,6 +410,10 @@ color: black;
 font-family: Arial, sans-serif;
 font-size: 20px; 
 margin: 10px; 
+}
+
+#start:hover {
+background-color: lightgreen; 
 }
 
 #stop {
@@ -418,6 +428,10 @@ font-size: 20px;
 margin: 10px; 
 }
 
+#stop:hover {
+background-color: #ff726f; 
+}
+
 #reset {
 background-color: #CBC3E3; 
 border: none; 
@@ -430,8 +444,12 @@ font-size: 12px;
 margin: 10px; 
 }
 
+#reset:hover {
+background-color: lightyellow; 
+}
+
 #next {
-background-color: #CBC3E3; 
+background-color: #7766c6; 
 border: none; 
 height: 50px; 
 width: 100px; 
@@ -441,6 +459,10 @@ font-family: Arial, sans-serif;
 font-size: 20px; 
 margin-top: 40px; 
 margin-bottom: -20px; 
+}
+
+#next:hover {
+background-color: lightgray; 
 }
 
 #output {
@@ -453,10 +475,9 @@ overflow: scroll;
 height: 200px; 
 }
 
-#begin:hover {
-background-color: lightgray; 
+h1 {
+font-size: 50px;
 }
-
 h3 {
   margin: 40px 0 0;
 }
