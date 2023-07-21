@@ -294,11 +294,11 @@ export default {
 						this.continuous = true
 						console.log("app stopped")
 						recognition.stop()
+						this.stop = false
 					}
 					}
 					else {
 						this.msg2 = 'No input data selected. Try selecting words per minute or another parameter.'
-						recognition.stop()
 					}
 
 		},
