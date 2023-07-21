@@ -267,7 +267,7 @@ export default {
 			}
 			recognition.start()
 			
-				if (this.textEmotionSelected == true || this.WPMSelected == true)	 {
+				if ((this.textEmotionSelected == true || this.WPMSelected == true) || (this.voiceEmotionSelected == true || this.faceEmotionSelected == true))	 {
 					
 					if (this.stop == false) {
 						this.showTime = false
@@ -281,11 +281,6 @@ export default {
 						
 						if (this.textEmotionSelected == true) {
 							this.getEmotionStatsInterval = window.setInterval(this.getEmotionStats, 5000)
-						}
-						if (this.textEmotionSelected == false && this.WPMSelected == false)	 {
-						this.msg2 = 'No input data selected. Try selecting words per minute or another parameter.'
-						this.showTime = true
-						this.stop = false
 						}
 					} 
 					if (this.stop == true) {
