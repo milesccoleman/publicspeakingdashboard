@@ -7,14 +7,14 @@
 		<p id="messageThree"> 
 			{{ msg3 }} 
 		</p>
-		<li v-if="!showWPM" class="title" id="timer">
+		<li v-if="!showTime" class="title" id="timer">
 		{{ time }}
 		</li>
-		<span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
-		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span>
-		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
-		<br><button id="next" v-if="!show" v-on:click="next">Next</button>
-		<ul v-if="!show2" id="output">
+		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM"> Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionEmotionsText"> Emotions in Text</button></span>
+		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionEmotionVoice"> Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionEmotionsFace"> Emotions in Face</button></span><br>
+		<span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
+		<!--<br><button id="next" v-if="!show" v-on:click="next">Next</button>-->
+		<ul v-if="!show3" id="output">
 		</ul>
 		<!--EMOTION FEEDBACK SECTION-->
 		
@@ -104,7 +104,8 @@ export default {
 			show2: true, 
 			show3: true, 
 			show4: true,
-			showWPM: true,  
+			showWPM: true,
+			showTime: true,   
 			WPMSelected: false,
 			WPMColor: '#CBC3E3',  
 			showTextEmotion: true, 
@@ -132,85 +133,97 @@ export default {
 			this.show = false
 			this.show3 = false
 			this.msg2 = ''
-			this.msg3 = 'Select the data you would like to track.'
+			this.msg3 = 'Select the data you would like to track, click start, and begin speaking.'
 		},
 		
-		next: function () {
-			this.show2 = false
-			this.show4 = false
-			this.show = true
-			this.msg3 = ''
-			
-			if (this.WPMSelected == true)	 {
-				this.showWPM = false
-			}	
-			
-			if (this.textEmotionSelected == true)	 {
-				this.showTextEmotion = false
-			}	
-			
-			if (this.voiceEmotionSelected == true)	 {
-				this.showVoiceEmotion = false
-			}	
-			
-			if (this.faceEmotionSelected == true)	 {
-				this.showFaceEmotion = false
-			}
-			
-			if (this.textEmotionSelected == false && this.WPMSelected == false)	 {
-				this.msg2 = 'No input data selected. Click "reset"and start over. (Try selecting WPM or another parameter.)'
-			}	
-		},
+// 		next: function () {
+// 			this.show2 = false
+// 			this.show4 = false
+// 			this.show = true
+// 			this.msg3 = ''
+// 			},
 		
 		selectWPM: function () {
-		
+			
 			if (this.WPMSelected == false) {
+				this.msg2 = ""
+				this.msg3 = ""
 				this.WPMSelected = true
 				this.WPMColor = 'lawngreen'
+				if (this.WPMSelected == true)	 {
+				this.showWPM = false
+			}
 			}
 			
 			else {
 				this.WPMSelected = false
 				this.WPMColor = '#CBC3E3'
+				if (this.WPMSelected == false)	 {
+				this.showWPM = true
+			}
 			}
 		},
 		
 		selectTextEmotion: function () {
 		
 			if (this.textEmotionSelected == false) {
+				this.msg2 = ""
+				this.msg3 = ""
 				this.textEmotionSelected = true
 				this.textEmotionColor = 'lawngreen'
+				if (this.textEmotionSelected == true)	 {
+				this.showTextEmotion = false
+			}	
 			}
 			
 			else {
 				this.textEmotionSelected = false
 				this.textEmotionColor = '#CBC3E3'
+				if (this.textEmotionSelected == false)	 {
+				this.showTextEmotion = true
+			}	
 			}
 		},
 		
 		selectVoiceEmotion: function () {
 		
 			if (this.voiceEmotionSelected == false) {
+				this.msg2 = ""
+				this.msg3 = ""
 				this.voiceEmotionSelected = true
 				this.voiceEmotionColor = 'lawngreen'
+				if (this.voiceEmotionSelected == true)	 {
+				this.showVoiceEmotion = false
+			}	
 			}
 			
 			else {
 				this.voiceEmotionSelected = false
 				this.voiceEmotionColor = '#CBC3E3'
+				if (this.voiceEmotionSelected == false)	 {
+				this.showVoiceEmotion = true
+			}	
 			}
 		},
 		
 		selectFaceEmotion: function () {
 		
 			if (this.faceEmotionSelected == false) {
+				this.msg2 = ""
+				this.msg3 = ""
 				this.faceEmotionSelected = true
 				this.faceEmotionColor = 'lawngreen'
+				if (this.faceEmotionSelected == true)	 {
+				this.showFaceEmotion = false
+			}
 			}
 			
 			else {
 				this.faceEmotionSelected = false
 				this.faceEmotionColor = '#CBC3E3'
+				if (this.faceEmotionSelected == false)	 {
+				this.showFaceEmotion = true
+			}
 			}
 		},
 	
@@ -253,24 +266,46 @@ export default {
 				
 			}
 			recognition.start()
+			
+				if (this.textEmotionSelected == true || this.WPMSelected == true)	 {
+					
 					if (this.stop == false) {
+						this.showTime = false
 						console.log("app started")
 						this.initialTime = Date.now();
 						this.grabTimeInterval = window.setInterval(this.grabTime, 1000)
-						this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
-						this.getEmotionStatsInterval = window.setInterval(this.getEmotionStats, 5000)
+						
+						if (this.WPMSelected == true) {
+							this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
+						}
+						
+						if (this.textEmotionSelected == true) {
+							this.getEmotionStatsInterval = window.setInterval(this.getEmotionStats, 5000)
+						}
+						if (this.textEmotionSelected == false && this.WPMSelected == false)	 {
+						this.msg2 = 'No input data selected. Try selecting words per minute or another parameter.'
+						this.showTime = true
+						this.stop = false
+						}
 					} 
 					if (this.stop == true) {
-						recognition.stop()
-						this.stop = false
+						clearInterval(this.grabTimeInterval)
+						this.showTime = false
 						this.continuous = true
 						console.log("app stopped")
-	
+						recognition.stop()
 					}
+					}
+					else {
+						this.msg2 = 'No input data selected. Try selecting words per minute or another parameter.'
+						recognition.stop()
+					}
+
 		},
 	
 		grabTime: function () {
-		//keep track of time in both milliseconds as well as minutes and seconds
+		//keep  of time in both milliseconds as well as minutes and seconds
+			
 			
 			this.timeDifference = Date.now() - this.initialTime;
 			var formatted = convertTime(this.timeDifference);
@@ -291,6 +326,7 @@ export default {
 				minutes = "0" + minutes 
 				}
 				return minutes + ':' + seconds;
+
 			}
 		},
 		
@@ -339,10 +375,8 @@ export default {
 		reset: function () {
 			location.reload()
 		}
-	
-	
-	
-	
+		
+		
 	}//
 }//	
 </script>
@@ -364,11 +398,11 @@ position: relative;
 
 }
 .optionsButton  {
-height: 150px;
-width: 150px; 
+height: 50px;
+width: 75px; 
 padding: 12px; 
-font-size: 25px; 
-margin: 20px;
+font-size: 10px; 
+margin: 5px;
 border: none; 
 font-weight: bold; 
 color: black; 
@@ -401,7 +435,7 @@ margin-bottom: -20px;
 }
 
 #begin:hover {
-background-color: lightgray; 
+background-color: #FFC300; 
 }
 
 #start {
@@ -466,7 +500,7 @@ margin-bottom: -20px;
 }
 
 #next:hover {
-background-color: lightgray; 
+background-color: #FFC300; 
 }
 
 #output {
