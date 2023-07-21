@@ -7,11 +7,10 @@
 		<p id="messageThree"> 
 			{{ msg3 }} 
 		</p>
-		<p v-if="!showWPM" class="title" id="timer">
-		{{ time }} <br>
-		<b>Time</b>
-		</p>
-		<br><span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><br><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
+		<li v-if="!showWPM" class="title" id="timer">
+		{{ time }}
+		</li>
+		<span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show4" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show2" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show2" v-on:click="reset">Reset</button></span><br>
 		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM">Track Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionTrackEmotionsText">Track Emotions in Text</button></span>
 		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionTrackEmotionVoice">Track Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionTrackEmotionsFace">Track Emotions in Face</button></span>
 		<br><button id="next" v-if="!show" v-on:click="next">Next</button>
@@ -86,7 +85,7 @@ export default {
 			registerWPMInterval: '',
 			getEmotionStatsInterval: '',  
 			initialTime: 0,  
-			time: 0,
+			time: "00:00",
 			timeElapsed: 0, 
 			timeDifference: 0, 
 			wordCount: 0,
@@ -285,6 +284,12 @@ export default {
 				var totalSeconds = Math.floor(miliseconds/1000);
 				var minutes = Math.floor(totalSeconds/60);
 				var seconds = totalSeconds - minutes * 60;
+				if (seconds < 10) {
+				seconds = "0" + seconds 
+				}
+				if (minutes < 10) {
+				minutes = "0" + minutes 
+				}
 				return minutes + ':' + seconds;
 			}
 		},
@@ -344,6 +349,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/lcd');
 #textEmotion, #faceEmotion, #voiceEmotion, #wpm {
 display: inline-block; 
 }
@@ -372,9 +378,7 @@ font-family: Arial, sans-serif;
 .title {
 color: white; 
 }
-#optionWPM {
-background-color: #CBC3E3; 
-}
+
 #messageTwo {
 color: #f48d79; 
 font-size: 25px; 
@@ -497,5 +501,12 @@ height: 100px;
 margin-bottom: -20px; 
 -webkit-filter: invert(1);
    filter: invert(1);
+}
+#timer {
+background: black; 
+color: white; 
+font-size: 50px; 
+font-family: 'LCD', sans-serif;
+padding: 15px; 
 }
 </style>
