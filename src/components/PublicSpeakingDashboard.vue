@@ -359,7 +359,7 @@ export default {
 				this.boredom = Math.round(obj.emotion.Bored * 100)
 				this.sadness = Math.round(obj.emotion.Sad * 100)
 				this.happiness = Math.round(obj.emotion.Happy * 100)
-				//.log("emotion data retrieved" + response)
+				console.log("emotion data retrieved" + response)
 			})
 				.catch((error) => {
 				console.log(error);
@@ -372,13 +372,11 @@ export default {
 			this.continuous = false
 			this.stop = true
 			this.overallDataObject = this.overallDataObject.slice(0, -1) + "}"
-			this.overallDataObject = JSON.parse(this.overallDataObject)
+			//this.overallDataObject = JSON.parse(this.overallDataObject)
 			console.log(this.overallDataObject)
-			console.log(this.overallDataObject[0].timeAndContent.emotion.Happy) //example of using the JSON object; also a useful tool: https://jsonpath.com/
+			//console.log(this.overallDataObject[0].timeAndContent.emotion.Happy) //example of using the JSON object; also a useful tool: https://jsonpath.com/
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
-			clearInterval(this.registerWPMInterval)
-			clearInterval(this.getEmotionStatsInterval)
 			return this.overallDataObject
 			
 		}, 
