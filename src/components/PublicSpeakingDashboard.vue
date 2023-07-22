@@ -117,7 +117,11 @@ export default {
 			voiceEmotionColor: '#CBC3E3', 
 			showFaceEmotion: true, 
 			faceEmotionSelected: false, 
-			faceEmotionColor: '#CBC3E3'
+			faceEmotionColor: '#CBC3E3', 
+			textEmotionData: '', 
+			overallDataObject: '', 
+			currentDataObject: '', 
+			dataNamer: -1
 		}
 	},
 	
@@ -245,8 +249,20 @@ export default {
 						finalTranscript += transcript;
 						if (this.workingTime) {
 						this.workingOutput = transcript
+						if (this.textEmotionSelected == true) {
+							this.getEmotionStats()
+						}
+						if (this.WPMSelected == true) {
+							this.registerWPM()
+						}
 						var node = document.createElement('li');
-						node.appendChild(document.createTextNode(this.workingTime + ": " + "" + this.workingOutput));
+						node.appendChild(document.createTextNode(" " + this.workingTime + ': ' + this.workingOutput));
+						if (this.textEmotionData) {
+						this.dataNamer = this.dataNamer + 1
+						this.currentDataObject = '"' + this.dataNamer + '":' + "{" + '"timeAndContent":' + '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + this.textEmotionData + "},"
+						this.overallDataObject = "{" + this.overallDataObject.slice(1) + this.currentDataObject;
+						}
+						console.log(this.overallDataObject)
 						document.querySelector('ul').appendChild(node);
 						this.workingOutput = ""
 						var elem = document.getElementById('output');
@@ -275,14 +291,6 @@ export default {
 						console.log("app started")
 						this.initialTime = Date.now();
 						this.grabTimeInterval = window.setInterval(this.grabTime, 1000)
-						
-						if (this.WPMSelected == true) {
-							this.registerWPMInterval = window.setInterval(this.registerWPM, 1000)
-						}
-						
-						if (this.textEmotionSelected == true) {
-							this.getEmotionStatsInterval = window.setInterval(this.getEmotionStats, 5000)
-						}
 					} 
 					if (this.stop == true) {
 						clearInterval(this.grabTimeInterval)
@@ -344,13 +352,14 @@ export default {
 			pd.emotion(this.wordsSpoken,"en")
 			.then((response) => {
 				let obj = JSON.parse(response)
+				this.textEmotionData = response.slice(1)
 				this.anger = Math.round(obj.emotion.Angry * 100) 
 				this.fear = Math.round(obj.emotion.Fear * 100) 
 				this.excitement = Math.round(obj.emotion.Excited * 100)
 				this.boredom = Math.round(obj.emotion.Bored * 100)
 				this.sadness = Math.round(obj.emotion.Sad * 100)
 				this.happiness = Math.round(obj.emotion.Happy * 100)
-				console.log("emotion data retrieved" + response)
+				//.log("emotion data retrieved" + response)
 			})
 				.catch((error) => {
 				console.log(error);
@@ -362,10 +371,13 @@ export default {
 		//reset speech recognition so it can stop and clear original timers
 			this.continuous = false
 			this.stop = true
+			this.overallDataObject = this.overallDataObject.slice(0, -1) + "}"
+			console.log(this.overallDataObject)
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
 			clearInterval(this.registerWPMInterval)
 			clearInterval(this.getEmotionStatsInterval)
+			
 		}, 
 	
 		reset: function () {
