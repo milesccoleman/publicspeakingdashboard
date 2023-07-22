@@ -149,7 +149,7 @@ export default {
 				this.msg2 = ""
 				this.msg3 = ""
 				this.WPMSelected = true
-				this.WPMColor = 'lawngreen'
+				this.WPMColor = '#f48d79'
 				if (this.WPMSelected == true)	 {
 				this.showWPM = false
 			}
@@ -170,7 +170,7 @@ export default {
 				this.msg2 = ""
 				this.msg3 = ""
 				this.textEmotionSelected = true
-				this.textEmotionColor = 'lawngreen'
+				this.textEmotionColor = '#f48d79'
 				if (this.textEmotionSelected == true)	 {
 				this.showTextEmotion = false
 			}	
@@ -191,7 +191,7 @@ export default {
 				this.msg2 = ""
 				this.msg3 = ""
 				this.voiceEmotionSelected = true
-				this.voiceEmotionColor = 'lawngreen'
+				this.voiceEmotionColor = '#f48d79'
 				if (this.voiceEmotionSelected == true)	 {
 				this.showVoiceEmotion = false
 			}	
@@ -212,7 +212,7 @@ export default {
 				this.msg2 = ""
 				this.msg3 = ""
 				this.faceEmotionSelected = true
-				this.faceEmotionColor = 'lawngreen'
+				this.faceEmotionColor = '#f48d79'
 				if (this.faceEmotionSelected == true)	 {
 				this.showFaceEmotion = false
 			}
@@ -468,12 +468,12 @@ background-color: #ff726f;
 #reset {
 background-color: #CBC3E3; 
 border: none; 
-height: 25px; 
-width: 50px; 
+height: 50px; 
+width: 100px; 
 font-weight: bold; 
 color: black; 
 font-family: Arial, sans-serif;
-font-size: 12px; 
+font-size: 20px; 
 margin: 10px; 
 }
 
@@ -502,10 +502,10 @@ background-color: #FFC300;
 margin: auto; 
 color: hotpink; 
 background-color: black; 
-width: 50%;  
+width: 80%;  
 text-align: left; 
 overflow: scroll; 
-height: 200px; 
+height: 300px; 
 }
 
 h1 {
