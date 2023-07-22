@@ -7,14 +7,15 @@
 		<p id="messageThree"> 
 			{{ msg3 }} 
 		</p>
-		<li v-if="!showTime" class="title" id="timer">
-		{{ time }}
-		</li>
 		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM"> Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionEmotionsText"> Emotions in Text</button></span>
 		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionEmotionVoice"> Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionEmotionsFace"> Emotions in Face</button></span><br>
 		<span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
 		<!--<br><button id="next" v-if="!show" v-on:click="next">Next</button>-->
+		<button v-if="!showTime" class="title" id="timer">
+		{{ time }}
+		</button>
 		<ul v-if="!show3" id="output">
+		
 		</ul>
 		<!--EMOTION FEEDBACK SECTION-->
 		
@@ -388,8 +389,8 @@ color: #71c68b;
 
 }
 .chartWindow {
-height: 250px; 
 position: relative;
+width: 80%;
 
 }
 .optionsButton  {
@@ -500,12 +501,14 @@ background-color: #FFC300;
 
 #output {
 margin: auto; 
-color: hotpink; 
-background-color: black; 
+color: #f48d79; 
+background-color: #222831; 
 width: 80%;  
 text-align: left; 
 overflow: scroll; 
 height: 300px; 
+font-size: 25px;
+margin-top: 0px;
 }
 
 h1 {
@@ -532,10 +535,17 @@ margin-bottom: -20px;
    filter: invert(1);
 }
 #timer {
-background: black; 
+background: #222831; 
 color: white; 
 font-size: 50px; 
 font-family: 'LCD', sans-serif;
-padding: 15px; 
+height: 100px; 
+width: 80%; 
+border: none; 
+margin: 10px; 
+font-weight: bold; 
+text-align: right; 
+padding: 20px;
+margin-bottom: 0px;
 }
 </style>
