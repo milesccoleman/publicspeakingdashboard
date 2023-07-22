@@ -558,7 +558,7 @@ width: 80%;
 border: none; 
 margin: 10px; 
 font-weight: bold; 
-text-align: right; 
+text-align: center; 
 padding: 20px;
 margin-bottom: 0px;
 }
