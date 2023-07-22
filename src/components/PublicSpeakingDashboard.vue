@@ -372,11 +372,14 @@ export default {
 			this.continuous = false
 			this.stop = true
 			this.overallDataObject = this.overallDataObject.slice(0, -1) + "}"
+			this.overallDataObject = JSON.parse(this.overallDataObject)
 			console.log(this.overallDataObject)
+			console.log(this.overallDataObject[0].timeAndContent.emotion.Happy) //example of using the JSON object; also a useful tool: https://jsonpath.com/
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
 			clearInterval(this.registerWPMInterval)
 			clearInterval(this.getEmotionStatsInterval)
+			return this.overallDataObject
 			
 		}, 
 	
@@ -403,6 +406,7 @@ color: #71c68b;
 .chartWindow {
 position: relative;
 width: 80%;
+display: inline-block; 
 
 }
 .optionsButton  {
