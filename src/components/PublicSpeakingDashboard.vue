@@ -10,13 +10,11 @@
 		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM"> Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionEmotionsText"> Emotions in Text</button></span>
 		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionEmotionVoice"> Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionEmotionsFace"> Emotions in Face</button></span><br>
 		<span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
-		<!--<br><button id="next" v-if="!show" v-on:click="next">Next</button>-->
-		<button v-if="!showTime" class="title" id="timer">
-		{{ time }}
-		</button>
-		<ul v-if="!show3" id="output">
-		
-		</ul>
+		<!--<br><button id="next" v-if="!show" v-on:click="next">Next</button>--><br>
+		<span id="rawData"></span>
+		<button v-if="!showTime" class="title" id="timer">{{ time }}</button>
+		<ul v-if="!show3" id="output"></ul>
+		<span><button v-if="!show3" id="dataShowButton" v-on:click="unhideData">View Raw Data</button><button v-if="!show3" id="dataHideButton" v-on:click="hideData">Hide Raw Data</button></span>
 		<!--EMOTION FEEDBACK SECTION-->
 		
 		<!--TODO: explore gridding in vue-->
@@ -106,7 +104,8 @@ export default {
 			show3: true, 
 			show4: true,
 			showWPM: true,
-			showTime: true,   
+			showTime: true,
+			showData: true,   
 			WPMSelected: false,
 			WPMColor: '#CBC3E3',  
 			showTextEmotion: true, 
@@ -121,7 +120,7 @@ export default {
 			textEmotionData: '', 
 			overallDataObject: '', 
 			currentDataObject: '', 
-			dataNamer: -1
+			dataNamer: -1, 
 		}
 	},
 	
@@ -259,8 +258,9 @@ export default {
 						node.appendChild(document.createTextNode(" " + this.workingTime + ': ' + this.workingOutput));
 						if (this.textEmotionData) {
 						this.dataNamer = this.dataNamer + 1
-						this.currentDataObject = '"' + this.dataNamer + '":' + "{" + '"timeAndContent":' + '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + this.textEmotionData + "},"
-						this.overallDataObject = "{" + this.overallDataObject.slice(1) + this.currentDataObject;
+						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + this.textEmotionData + ","
+						var div = document.getElementById('rawData');
+						div.innerHTML += this.currentDataObject;
 						}
 						console.log(this.overallDataObject)
 						document.querySelector('ul').appendChild(node);
@@ -371,18 +371,21 @@ export default {
 		//reset speech recognition so it can stop and clear original timers
 			this.continuous = false
 			this.stop = true
-			this.overallDataObject = this.overallDataObject.slice(0, -1) + "}"
-			//this.overallDataObject = JSON.parse(this.overallDataObject)
-			console.log(this.overallDataObject)
-			//console.log(this.overallDataObject[0].timeAndContent.emotion.Happy) //example of using the JSON object; also a useful tool: https://jsonpath.com/
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
-			return this.overallDataObject
 			
 		}, 
 	
 		reset: function () {
 			location.reload()
+		}, 
+		
+		unhideData: function () {
+			document.getElementById("rawData").style.display="inline-block"
+		}, 
+		
+		hideData: function () {
+			document.getElementById("rawData").style.display="none"
 		}
 		
 		
@@ -523,6 +526,43 @@ overflow: scroll;
 height: 300px; 
 font-size: 25px;
 margin-top: 0px;
+margin-bottom: 0px
+}
+
+#rawData {
+display: none; 
+margin: auto; 
+color: lawngreen; 
+background-color: #222831; 
+width: 80%;  
+text-align: left; 
+overflow: scroll; 
+height: 100px; 
+font-size: 25px;
+margin: 0px;
+}
+
+#dataHideButton {
+margin: auto; 
+color:  lawngreen; 
+background-color: #222831; 
+width: 40%;  
+text-align: center; 
+height: 30px; 
+font-size: 10px;
+margin: 0px;
+border: none; 
+}
+#dataShowButton {
+margin: auto; 
+color:  lawngreen; 
+background-color: #222831; 
+width: 40%;  
+text-align: center; 
+height: 30px; 
+font-size: 10px;
+margin: 0px;
+border: none; 
 }
 
 h1 {
