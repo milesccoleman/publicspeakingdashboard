@@ -7,6 +7,7 @@
 		<p id="messageThree"> 
 			{{ msg3 }} 
 		</p>
+		<span id="timeHolder">Time: </span>
 		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM"> Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionEmotionsText"> Emotions in Text</button></span>
 		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionEmotionVoice"> Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionEmotionsFace"> Emotions in Face</button></span><br>
 		<span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
@@ -120,7 +121,9 @@ export default {
 			textEmotionData: '', 
 			overallDataObject: '', 
 			currentDataObject: '', 
-			dataNamer: -1, 
+			dataNamer: 0,
+			time1: true,
+			time2: false 
 		}
 	},
 	
@@ -257,7 +260,6 @@ export default {
 						var node = document.createElement('li');
 						node.appendChild(document.createTextNode(" " + this.workingTime + ': ' + this.workingOutput));
 						if (this.textEmotionData) {
-						this.dataNamer = this.dataNamer + 1
 						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + this.textEmotionData + ","
 						var div = document.getElementById('rawData');
 						div.innerHTML += this.currentDataObject;
@@ -310,15 +312,24 @@ export default {
 		grabTime: function () {
 		//keep  of time in both milliseconds as well as minutes and seconds
 			
-			
+			if (this.time1 == true) {
 			this.timeDifference = Date.now() - this.initialTime;
+			}
+			
+			if (this.time1 == false){
+			this.timeDifference = Date.now() - this.initialTime;
+			var middleTime = parseInt(document.getElementById("timeHolder").innerHTML);
+			this.timeDifference = this.timeDifference + middleTime
+			}
+			
 			var formatted = convertTime(this.timeDifference);
 			document.getElementById('timer').innerHTML = '' + formatted;
 			this.workingTime = formatted; 
 			console.log(formatted)
+			this.dataNamer = this.timeDifference
+			var div = document.getElementById('timeHolder');
+			div.innerHTML = this.dataNamer
 			
-			this.timeElapsed = this.timeDifference
-			return this.timeElapsed
 			function convertTime(miliseconds) {
 				var totalSeconds = Math.floor(miliseconds/1000);
 				var minutes = Math.floor(totalSeconds/60);
@@ -371,6 +382,7 @@ export default {
 		//reset speech recognition so it can stop and clear original timers
 			this.continuous = false
 			this.stop = true
+			this.time1 = false
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
 			
@@ -601,5 +613,10 @@ font-weight: bold;
 text-align: center; 
 padding: 20px;
 margin-bottom: 0px;
+}
+#timeHolder {
+background-color: #123b52; 
+color: white; 
+display: none; 
 }
 </style>
