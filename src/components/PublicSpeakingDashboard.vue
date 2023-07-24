@@ -413,13 +413,13 @@ export default {
 				});
 				
 				var layout = {
-				paper_bgcolor: "#36454f",
-				plot_bgcolor: "#36454f",
+				paper_bgcolor: "#222831",
+				plot_bgcolor: "#222831",
 				title: {
 					text:'Rate of Speech',
 					font: {
 					family: 'Arial, sans-serif',
-					size: 16, 
+					size: 25, 
 					color: '#71c68b'
 				},
 					xref: 'paper',
@@ -612,9 +612,13 @@ margin-bottom: 0px
 }
 
 #wpmChart {
-overflow: scroll; 
+overflow: auto; 
 width: 80%; 
 display: inline-block;
+border: solid; 
+border-color: #36454f;
+border-width: thick;
+margin-top: 0px;
 }
 
 #rawData {
