@@ -16,16 +16,14 @@
 		<button v-if="!showTime" class="title" id="timer">{{ time }}</button>
 		<ul v-if="!show3" id="output"></ul>
 		<span><button v-if="!show3" id="dataShowButton" v-on:click="unhideData">View Raw Data</button><button v-if="!show3" id="dataHideButton" v-on:click="hideData">Hide Raw Data</button></span>
-		<!--EMOTION FEEDBACK SECTION-->
 		
-		<!--TODO: explore gridding in vue-->
+		<!--FEEDBACK SECTION-->
 		
+		<!--WPM-->
+		<span v-if="!showWPM" id="wpmChart" ></span><br>
+		<!--<p v-if="!showWPM" id="wpm">{{ wpm }} <br><b>Overall Average Words Per Minute</b></p><br>-->
 		<span id="voiceAndFace">
-			<span class="title" v-if="!showWPM" id="wpm">
-				<span class="chartWindow" id="wpmChart" ></span><br>
-				{{ wpm }} <br>
-				<b>Overall Average Words Per Minute</b>
-			</span><br>
+			
 			<p  v-if="!showTextEmotion" class="title" id="textEmotion">
 				Anger: {{ this.anger }} <br>
 				Fear: {{ this.fear}} <br>
@@ -402,7 +400,11 @@ export default {
 				let trace1 = {
 					x: [],
 					y: [],
-					mode: "lines"
+					mode: "lines", 
+					line: {
+						color: '#f48d79',
+						width: 12
+					}
 				};
 
 				data.forEach(function(val) {
@@ -411,34 +413,51 @@ export default {
 				});
 				
 				var layout = {
-				
+				paper_bgcolor: "#36454f",
+				plot_bgcolor: "#36454f",
 				title: {
 					text:'Rate of Speech',
 					font: {
 					family: 'Arial, sans-serif',
-					size: 24
+					size: 16, 
+					color: '#71c68b'
 				},
 					xref: 'paper',
 					automargin: true,
-					x: 0.05,
+					x: 0.5,
 				},
+				autosize: true,
 					xaxis: {
+						tickfont : {
+							size : 16,
+							color : '#71c68b'
+						},
+						tickcolor: '#36454f',
 						title: {
 							text: 'Time',
 							font: {
 							family: 'Arial, sans-serif',
 							size: 18,
-							color: '#7f7f7f'
+							color: '#71c68b',
 							}
 						},
 					},
 					yaxis: {
+						margin: {
+							autoexpand: true,
+						},
+						automargin: true,
+						tickfont : {
+							size : 16,
+							color : '#71c68b'
+						},
+						tickcolor: '#36454f',
 						title: {
 						text: 'Words Per Minute',
 							font: {
 							family: 'Arial, sans-serif',
 							size: 18,
-							color: '#7f7f7f'
+							color: '#71c68b' 
 							}
 						}
 					}
@@ -586,7 +605,7 @@ background-color: #222831;
 width: 80%;  
 text-align: left; 
 overflow: scroll; 
-height: 300px; 
+height: 170px; 
 font-size: 25px;
 margin-top: 0px;
 margin-bottom: 0px
@@ -594,7 +613,8 @@ margin-bottom: 0px
 
 #wpmChart {
 overflow: scroll; 
-width: 87%; 
+width: 80%; 
+display: inline-block;
 }
 
 #rawData {
@@ -612,7 +632,7 @@ margin: 0px;
 
 #dataHideButton {
 margin: auto; 
-color:  lawngreen; 
+color:  #222831; 
 background-color: #222831; 
 width: 40%;  
 text-align: center; 
@@ -624,7 +644,7 @@ border: none;
 
 #dataShowButton {
 margin: auto; 
-color:  lawngreen; 
+color:  #222831; 
 background-color: #222831; 
 width: 40%;  
 text-align: center; 
