@@ -330,6 +330,7 @@ export default {
 			var div = document.getElementById('timeHolder');
 			div.innerHTML = this.dataNamer
 			
+			this.timeElapsed = this.timeDifference
 			function convertTime(miliseconds) {
 				var totalSeconds = Math.floor(miliseconds/1000);
 				var minutes = Math.floor(totalSeconds/60);
