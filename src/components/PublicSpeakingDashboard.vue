@@ -403,7 +403,7 @@ export default {
 					mode: "lines", 
 					line: {
 						color: '#f48d79',
-						width: 12
+						width: 6
 					}
 				};
 
