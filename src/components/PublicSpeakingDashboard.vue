@@ -21,54 +21,42 @@
 		<!--TODO: explore gridding in vue-->
 		
 		<span id="voiceAndFace">
-		<p  v-if="!showTextEmotion" class="title" id="textEmotion">
-		Anger: {{ this.anger }} <br>
-		Fear: {{ this.fear}} <br>
-		Excitement: {{ this.excitement }} <br>
-		Boredom: {{ this.boredom}} <br>
-		Sadness: {{ this.sadness}} <br>
-		Happiness: {{ this.happiness }}<br>
-		<img class="chartWindow" src="textEmotions.png"><br>
-		<b>Text Emotion (out of 100)</b>
-		</p>
-		<p  v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
-			<img class="chartWindow" id="voiceEmotion" src="faceEmotions.png"><br>
-		<b>Voice Analysis Placeholder</b>
-		<!--add waveform-->
-		</p>
-		<p  v-if="!showFaceEmotion" class="title" id="faceEmotion">
-			<img class="chartWindow" id="faceEmotion" src="faceEmotions.png"><br>
-		<b>Face Analysis Placeholder</b>
-		<!--add video feedback-->
-		</p>		
-    </span>
-<!-- 
-    <p v-if="!showWPM" class="title" id="totalWords"> 
-		{{ totalWords }} <br>
-		<b>Total Words Detected</b>
-    </p>
- -->
- 
- 
- <!--Words Per Minute, Filler Words, and Volume SECTION-->
- 
- 
-    <p class="title" v-if="!showWPM" id="wpm">
-     <img class="chartWindow" id="WPM" src="WPM.png"><br>
-		{{ wpm }} <br>
-		<b>Overall Average Words Per Minute</b>
-    </p>
-
-	<!--TODO: Filler Words-->
-	<!--TODO: Dynamics - attack - decay - volume-->
-
+			<span class="title" v-if="!showWPM" id="wpm">
+				<span class="chartWindow" id="wpmChart" ></span><br>
+				{{ wpm }} <br>
+				<b>Overall Average Words Per Minute</b>
+			</span><br>
+			<p  v-if="!showTextEmotion" class="title" id="textEmotion">
+				Anger: {{ this.anger }} <br>
+				Fear: {{ this.fear}} <br>
+				Excitement: {{ this.excitement }} <br>
+				Boredom: {{ this.boredom}} <br>
+				Sadness: {{ this.sadness}} <br>
+				Happiness: {{ this.happiness }}<br>
+				<img class="chartWindow" src="textEmotions.png"><br>
+				<b>Text Emotion (out of 100)</b>
+			</p>
+			<p v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
+				<img class="chartWindow" id="voiceEmotion" src="faceEmotions.png"><br>
+				<b>Voice Analysis Placeholder</b>
+				<!--add waveform-->
+			</p>
+			<p v-if="!showFaceEmotion" class="title" id="faceEmotion">
+				<img class="chartWindow" id="faceEmotion" src="faceEmotions.png"><br>
+				<b>Face Analysis Placeholder</b>
+				<!--add video feedback-->
+			</p>
+				<!--Words Per Minute, Filler Words, and Volume SECTION-->
+				<!--TODO: Filler Words-->
+				<!--TODO: Dynamics - attack - decay - volume-->		
+		</span>
 
   </div>
 </template>
 
 <script>
 import paralleldots from 'paralleldots'
-//import Plotly from 'plotly.js-dist'
+import Plotly from 'plotly.js-dist'
 export default {
   name: 'publicSpeakingDashboard',
   props: {
@@ -385,6 +373,7 @@ export default {
 			this.continuous = false
 			this.stop = true
 			this.time1 = false
+			this.visualizeData()
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
 			
@@ -400,8 +389,67 @@ export default {
 		
 		hideData: function () {
 			document.getElementById("rawData").style.display="none"
-		}
+		}, 
 		
+		visualizeData: function () {
+		
+			if (this.showWPM == false) {
+				var wpmRawData = document.getElementById("rawData").innerHTML
+				var wpmSlicedDataArray = "[" + wpmRawData.slice(0, -1) + "]"
+				var data = JSON.parse(wpmSlicedDataArray)
+					console.log("raw data:" + data)
+
+				let trace1 = {
+					x: [],
+					y: [],
+					mode: "lines"
+				};
+
+				data.forEach(function(val) {
+				trace1.x.push(val["time"]);
+				trace1.y.push(val["wpm"]);
+				});
+				
+				var layout = {
+				
+				title: {
+					text:'Rate of Speech',
+					font: {
+					family: 'Arial, sans-serif',
+					size: 24
+				},
+					xref: 'paper',
+					automargin: true,
+					x: 0.05,
+				},
+					xaxis: {
+						title: {
+							text: 'Time',
+							font: {
+							family: 'Arial, sans-serif',
+							size: 18,
+							color: '#7f7f7f'
+							}
+						},
+					},
+					yaxis: {
+						title: {
+						text: 'Words Per Minute',
+							font: {
+							family: 'Arial, sans-serif',
+							size: 18,
+							color: '#7f7f7f'
+							}
+						}
+					}
+				};
+
+				var WPMChart = document.getElementById('wpmChart');
+				Plotly.newPlot(WPMChart, [trace1], layout);
+			}
+		
+		
+		}
 		
 	}//
 }//	
@@ -420,7 +468,6 @@ color: #71c68b;
 }
 .chartWindow {
 position: relative;
-width: 80%;
 display: inline-block; 
 
 }
@@ -444,10 +491,12 @@ color: white;
 color: #f48d79; 
 font-size: 25px; 
 }
+
 #messageThree {
 color: white; 
 font-size: 25px; 
 }
+
 #begin {
 background-color: #7766c6; 
 border: none; 
@@ -543,6 +592,11 @@ margin-top: 0px;
 margin-bottom: 0px
 }
 
+#wpmChart {
+overflow: scroll; 
+width: 87%; 
+}
+
 #rawData {
 display: none; 
 margin: auto; 
@@ -567,6 +621,7 @@ font-size: 10px;
 margin: 0px;
 border: none; 
 }
+
 #dataShowButton {
 margin: auto; 
 color:  lawngreen; 
@@ -596,6 +651,7 @@ li {
 a {
   color: #42b983;
 }
+
 #talking {
 height: 100px; 
 margin-bottom: -20px; 
@@ -616,6 +672,7 @@ text-align: center;
 padding: 20px;
 margin-bottom: 0px;
 }
+
 #timeHolder {
 background-color: #123b52; 
 color: white; 

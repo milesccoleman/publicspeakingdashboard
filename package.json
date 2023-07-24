@@ -11,6 +11,7 @@
     "core-js": "^3.6.5",
     "paralleldots": "^3.2.6",
     "plotly": "^1.0.6",
+    "plotly.js-dist": "^2.24.3",
     "vue": "^2.6.11"
   },
   "devDependencies": {
