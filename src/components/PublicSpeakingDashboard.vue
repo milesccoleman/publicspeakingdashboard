@@ -68,6 +68,7 @@
 
 <script>
 import paralleldots from 'paralleldots'
+//import Plotly from 'plotly.js-dist'
 export default {
   name: 'publicSpeakingDashboard',
   props: {
