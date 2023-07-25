@@ -67,7 +67,7 @@ export default {
 			msg3: "",
 			wordsSpoken: 'START', 
 			output: 'Recognized Text',
-			workingOutpu: '',
+			workingOutput: '',
 			workingTime: 0, 
 			grabTimeInterval: '', 
 			registerWPMInterval: '',
