@@ -8,9 +8,9 @@
 			{{ msg3 }} 
 		</p>
 		<span id="timeHolder">Time: </span>
-		<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM"> Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionEmotionsText"> Emotions in Text</button></span>
-		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionEmotionVoice"> Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionEmotionsFace"> Emotions in Face</button></span><br>
-		<span><button id="begin" v-if="show3" v-on:click="begin">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
+		<!--<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM"> Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionEmotionsText"> Emotions in Text</button></span>
+		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionEmotionVoice"> Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionEmotionsFace"> Emotions in Face</button></span><br>-->
+		<span><button id="begin" v-if="show3" v-on:click="begin(); selectWPM(); selectTextEmotion(); selectVoiceEmotion(); selectFaceEmotion()">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
 		<!--<br><button id="next" v-if="!show" v-on:click="next">Next</button>--><br>
 		<span id="rawData"></span>
 		<button v-if="!showTime" class="title" id="timer">{{ time }}</button>
@@ -20,11 +20,12 @@
 		<!--FEEDBACK SECTION-->
 		
 		<!--WPM-->
-		<span v-if="!showWPM" id="wpmChart" ></span><br>
+		<span v-if="!showWPM" id="wpmChart" ></span>
+		<span v-if="!showTextEmotion" id="textEmotionChart" ></span>
 		<!--<p v-if="!showWPM" id="wpm">{{ wpm }} <br><b>Overall Average Words Per Minute</b></p><br>-->
 		<span id="voiceAndFace">
 			
-			<p  v-if="!showTextEmotion" class="title" id="textEmotion">
+			<!--<p  v-if="!showTextEmotion" class="title" id="textEmotion">
 				Anger: {{ this.anger }} <br>
 				Fear: {{ this.fear}} <br>
 				Excitement: {{ this.excitement }} <br>
@@ -33,7 +34,7 @@
 				Happiness: {{ this.happiness }}<br>
 				<img class="chartWindow" src="textEmotions.png"><br>
 				<b>Text Emotion (out of 100)</b>
-			</p>
+			</p>-->	
 			<p v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
 				<img class="chartWindow" id="voiceEmotion" src="faceEmotions.png"><br>
 				<b>Voice Analysis Placeholder</b>
@@ -92,6 +93,7 @@ export default {
 			show3: true, 
 			show4: true,
 			showWPM: true,
+			showTEXTEMOTION: true, 
 			showTime: true,
 			showData: true,   
 			WPMSelected: false,
@@ -247,7 +249,7 @@ export default {
 						var node = document.createElement('li');
 						node.appendChild(document.createTextNode(" " + this.workingTime + ': ' + this.workingOutput));
 						if (this.textEmotionData) {
-						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + this.textEmotionData + ","
+						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + '"Angry":' + this.anger + "," + '"Fear":' + this.fear + "," + '"Excited":' + this.excitement + "," + '"Bored":' + this.boredom + "," + '"Sad":' + this.sadness + "," + '"Happy":' + this.happiness + "},"
 						var div = document.getElementById('rawData');
 						div.innerHTML += this.currentDataObject;
 						}
@@ -401,23 +403,25 @@ export default {
 		}, 
 		
 		visualizeData: function () {
-		
+				var overallRawData = document.getElementById("rawData").innerHTML
+				var overallSlicedDataArray = "[" + overallRawData.slice(0, -1) + "]"
+				var data = JSON.parse(overallSlicedDataArray)
+				console.log("raw data:" + data[0].Angry)
+			
+			
+			//Words Per Minute
 			if (this.showWPM == false) {
-				var wpmRawData = document.getElementById("rawData").innerHTML
-				var wpmSlicedDataArray = "[" + wpmRawData.slice(0, -1) + "]"
-				var data = JSON.parse(wpmSlicedDataArray)
-					console.log("raw data:" + data)
-
+				
 				let trace1 = {
 					x: [],
 					y: [],
 					mode: "lines", 
 					line: {
 						color: '#f48d79',
-						width: 6
+						width: 2
 					}
 				};
-
+				
 				data.forEach(function(val) {
 				trace1.x.push(val["time"]);
 				trace1.y.push(val["wpm"]);
@@ -443,7 +447,7 @@ export default {
 				autosize: true,
 					xaxis: {
 						tickfont : {
-							size : 16,
+							size : 18,
 							color : '#71c68b'
 						},
 						tickcolor: '#36454f',
@@ -462,7 +466,7 @@ export default {
 						},
 						automargin: true,
 						tickfont : {
-							size : 16,
+							size : 18,
 							color : '#71c68b'
 						},
 						tickcolor: '#36454f',
@@ -480,7 +484,149 @@ export default {
 				var WPMChart = document.getElementById('wpmChart');
 				Plotly.newPlot(WPMChart, [trace1], layout);
 			}
-		
+			
+			
+			//Emotions in Text
+			if (this.textEmotionSelected == true) {
+				
+				let Anger = {
+					x: [],
+					y: [],
+					mode: "lines",
+					name: 'Anger', 
+					line: {
+						color: '#ff6961',
+						width: 2
+					}
+				};
+				
+				let Fear = {
+					x: [],
+					y: [],
+					mode: "lines",
+					name: 'Fear', 
+					line: {
+						color: '#fdfd96',
+						width: 2
+					}
+				};
+				
+				let Excitement = {
+					x: [],
+					y: [],
+					mode: "lines",
+					name: 'Excitement', 
+					line: {
+						color: '#ffb347',
+						width: 2
+					}
+				};
+				
+				let Boredom = {
+					x: [],
+					y: [],
+					mode: "lines",
+					name: 'Boredom', 
+					line: {
+						color: '#cfcfc4',
+						width: 2
+					}
+				};
+				
+				let Sadness = {
+					x: [],
+					y: [],
+					mode: "lines",
+					name: 'Sadness', 
+					line: {
+						color: '#FF5733',
+						width: 2
+					}
+				};
+				
+				let Happiness = {
+					x: [],
+					y: [],
+					mode: "lines",
+					name: 'Happiness', 
+					line: {
+						color: '#77dd77',
+						width: 2
+					}
+				};
+
+				data.forEach(function(val) {
+				Anger.x.push(val["time"]);
+				Anger.y.push(val["Angry"]);
+				Fear.x.push(val["time"]);
+				Fear.y.push(val["Fear"]);
+				Excitement.x.push(val["time"]);
+				Excitement.y.push(val["Excited"]);
+				Boredom.x.push(val["time"]);
+				Boredom.y.push(val["Bored"]);
+				Sadness.x.push(val["time"]);
+				Sadness.y.push(val["Sad"]);
+				Happiness.x.push(val["time"]);
+				Happiness.y.push(val["Happy"]);
+				});
+				
+				var layout2 = {
+				paper_bgcolor: "#222831",
+				plot_bgcolor: "#222831",
+				title: {
+					text:'Emotions in Words Spoken',
+					font: {
+					family: 'Arial, sans-serif',
+					size: 25, 
+					color: '#FFC300', 
+				},
+					xref: 'paper',
+					automargin: true,
+					x: 0.5,
+					xanchor: 'center', 
+					y: 0.88, 
+					yanchor: 'top'
+				},
+				autosize: true,
+					xaxis: {
+						tickfont : {
+							size : 16,
+							color : '#FFC300'
+						},
+						tickcolor: '#36454f',
+						title: {
+							text: 'Time',
+							font: {
+							family: 'Arial, sans-serif',
+							size: 18,
+							color: '#FFC300',
+							}
+						},
+					},
+					yaxis: {
+						margin: {
+							autoexpand: true,
+						},
+						automargin: true,
+						tickfont : {
+							size : 16,
+							color : '#FFC300'
+						},
+						tickcolor: '#36454f',
+						title: {
+						text: 'Emotions',
+							font: {
+							family: 'Arial, sans-serif',
+							size: 18,
+							color: '#FFC300' 
+							}
+						}
+					}
+				};
+
+				var TEXTEMOTIONChart = document.getElementById('textEmotionChart');
+				Plotly.newPlot(TEXTEMOTIONChart, [Anger, Fear, Excitement, Boredom, Sadness, Happiness], layout2);
+			}
 		
 		}
 		
@@ -631,6 +777,14 @@ overflow: auto;
 width: 80%; 
 display: inline-block;
 margin-top: 3px;
+margin-bottom: 0px; 
+}
+
+#textEmotionChart {
+overflow: auto; 
+width: 80%; 
+display: inline-block;
+margin-top: -3px; 
 }
 
 #rawData {
