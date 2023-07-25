@@ -87,7 +87,7 @@ export default {
 			workingTime: 0, 
 			grabTimeInterval: '', 
 			registerWPMInterval: '',
-			getEmotionStatsInterval: '',  
+			getEmotionStatsInterval: '',
 			initialTime: 0,  
 			time: "00:00",
 			timeElapsed: 0, 
@@ -128,7 +128,8 @@ export default {
 			currentDataObject: '', 
 			dataNamer: 0,
 			time1: true,
-			time2: false 
+			time2: false, 
+			placeHolderForTimeCheck: 0 
 		}
 	},
 	
@@ -254,12 +255,8 @@ export default {
 						finalTranscript += transcript;
 						if (this.workingTime) {
 						this.workingOutput = transcript
-						if (this.textEmotionSelected == true) {
-							this.getEmotionStats()
-						}
-						if (this.WPMSelected == true) {
-							this.registerWPM()
-						}
+						this.getEmotionStats()
+						this.registerWPM()
 						var node = document.createElement('li');
 						node.appendChild(document.createTextNode(" " + this.workingTime + ': ' + this.workingOutput));
 						if (this.textEmotionData) {
@@ -319,7 +316,8 @@ export default {
 			this.timeDifference = Date.now() - this.initialTime;
 			this.dataNamer = this.timeDifference
 			var div = document.getElementById('timeHolder');
-			div.innerHTML = this.dataNamer 
+			div.innerHTML = this.dataNamer
+			this.checkForTargetTime() 
 			console.log(this.dataNamer)
 			}
 			
@@ -327,7 +325,8 @@ export default {
 				this.timeDifference = Date.now() - this.initialTime;
 				var middleTime = parseInt(document.getElementById("timeHolder").innerHTML);
 				console.log(middleTime)
-				this.timeDifference = this.timeDifference + middleTime 
+				this.timeDifference = this.timeDifference + middleTime
+				this.checkForTargetTime() 
 				this.time2 = true
 			}
 			
@@ -336,9 +335,29 @@ export default {
 			this.workingTime = formatted; 
 			console.log(formatted)
 			
-			
-			
 			this.timeElapsed = this.timeDifference
+			this.placeHolderForTimeCheck = this.timeDifference
+			
+			var selectedTime = document.getElementById("speakingTime").value;
+			
+			var selectedTimeFifteen = selectedTime - 15000
+			
+			var selectedTimeThirty = selectedTime - 30000
+			
+			var element = document.getElementById("timer");
+			
+			if (this.placeHolderForTimeCheck >= selectedTimeThirty) {
+				element.style.backgroundColor = "green";
+			}
+			
+			if (this.placeHolderForTimeCheck >= selectedTimeFifteen) {
+				element.style.backgroundColor = "yellow";
+			}
+			
+			if (this.placeHolderForTimeCheck >= selectedTime) {
+				element.style.backgroundColor = "red";
+			}
+			
 			function convertTime(miliseconds) {
 				var totalSeconds = Math.floor(miliseconds/1000);
 				var minutes = Math.floor(totalSeconds/60);
@@ -359,6 +378,12 @@ export default {
 			const arr = str.split(' ');
 			return arr.filter(word => word !== '').length;
 		}, 
+		
+		checkForTargetTime: function () {
+			
+			
+			
+		},
 		
 		registerWPM: function () {
 		//calculate number of words per minute--at one second intervals
