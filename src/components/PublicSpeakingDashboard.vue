@@ -10,7 +10,23 @@
 		<span id="timeHolder">Time: </span>
 		<!--<span><button  v-bind:style="{ backgroundColor: WPMColor}" v-if="!show" v-on:click="selectWPM" class="optionsButton" id="optionWPM"> Words Per Minute</button><button v-bind:style="{ backgroundColor: textEmotionColor}" v-if="!show" v-on:click="selectTextEmotion" class="optionsButton" id="optionEmotionsText"> Emotions in Text</button></span>
 		<span><button v-bind:style="{ backgroundColor: voiceEmotionColor}" v-if="!show" v-on:click="selectVoiceEmotion" class="optionsButton" id="optionEmotionVoice"> Emotions in Voice</button><button v-bind:style="{ backgroundColor: faceEmotionColor}" v-if="!show" v-on:click="selectFaceEmotion" class="optionsButton" id="optionEmotionsFace"> Emotions in Face</button></span><br>-->
-		<span><button id="begin" v-if="show3" v-on:click="begin(); selectWPM(); selectTextEmotion(); selectVoiceEmotion(); selectFaceEmotion()">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
+		<span><span v-if="!show3" id="dropdownWrapper">
+		<label for="speakingTime" alt="Choose Desired Speech Length:"></label>
+			<select name="speakingTime" id="speakingTime">
+				<option value="nope" selected>Choose Target Speaking Time (Will Give 30 and 15 Second Warnings)</option> 
+				<option value="60000">1 Min</option> 
+				<option value="180000">3 Min</option> 
+				<option value="300000">5 Min</option> 
+				<option value="600000">10 Min</option> 
+				<option value="900000">15 Min</option> 
+				<option value="1200000">20 Min</option> 
+				<option value="1500000">25 Min</option> 
+				<option value="1800000">30 Min</option> 
+				<option value="2700000">45 Min</option> 
+				<option value="3600000">60 Min</option> 
+			</select>
+		</span>
+		<button id="begin" v-if="show3" v-on:click="begin(); selectWPM(); selectTextEmotion(); selectVoiceEmotion(); selectFaceEmotion()">Begin</button><button id="start"  v-if="!show3" v-on:click="initiateVoiceControl">Start</button><button id="stop" v-if="!show3" v-on:click="stopVoiceControl">Stop</button><button id="reset"  v-if="!show3" v-on:click="reset">Reset</button></span>
 		<!--<br><button id="next" v-if="!show" v-on:click="next">Next</button>--><br>
 		<span id="rawData"></span>
 		<button v-if="!showTime" class="title" id="timer">{{ time }}</button>
@@ -130,7 +146,7 @@ export default {
 			this.show = false
 			this.show3 = false
 			this.msg2 = ''
-			//this.msg3 = 'Select the data you would like to track, click start, and begin speaking.'
+			this.msg3 = 'Choose a desired speech length. Click start. Then, click stop when finished.'
 			console.log("Dashboard page loaded")
 		},
 		
@@ -145,7 +161,6 @@ export default {
 			
 			if (this.WPMSelected == false) {
 				this.msg2 = ""
-				this.msg3 = ""
 				this.WPMSelected = true
 				this.WPMColor = '#f48d79'
 				if (this.WPMSelected == true)	 {
@@ -166,7 +181,6 @@ export default {
 		
 			if (this.textEmotionSelected == false) {
 				this.msg2 = ""
-				this.msg3 = ""
 				this.textEmotionSelected = true
 				this.textEmotionColor = '#f48d79'
 				if (this.textEmotionSelected == true)	 {
@@ -187,7 +201,6 @@ export default {
 		
 			if (this.voiceEmotionSelected == false) {
 				this.msg2 = ""
-				this.msg3 = ""
 				this.voiceEmotionSelected = true
 				this.voiceEmotionColor = '#f48d79'
 				if (this.voiceEmotionSelected == true)	 {
@@ -208,7 +221,6 @@ export default {
 		
 			if (this.faceEmotionSelected == false) {
 				this.msg2 = ""
-				this.msg3 = ""
 				this.faceEmotionSelected = true
 				this.faceEmotionColor = '#f48d79'
 				if (this.faceEmotionSelected == true)	 {
@@ -278,7 +290,7 @@ export default {
 			recognition.start()
 			
 				if ((this.textEmotionSelected == true || this.WPMSelected == true) || (this.voiceEmotionSelected == true || this.faceEmotionSelected == true))	 {
-					
+					this.msg3 = ""
 					if (this.stop == false) {
 						this.showTime = false
 						console.log("app started")
@@ -408,7 +420,6 @@ export default {
 				var overallRawData = document.getElementById("rawData").innerHTML
 				var overallSlicedDataArray = "[" + overallRawData.slice(0, -1) + "]"
 				var data = JSON.parse(overallSlicedDataArray)
-				console.log("raw data:" + data[0].Angry)
 			
 			
 			//Words Per Minute
@@ -869,5 +880,23 @@ margin-bottom: 0px;
 background-color: #123b52; 
 color: white; 
 display: none; 
+}
+
+#speakingTime{
+background-color: #8d79f4; 
+outline: none;
+scroll-behavior: smooth;
+height: 50px; 
+width: 100px; 
+font-weight: bold; 
+color: black; 
+font-family: Arial, sans-serif;
+font-size: 21px; 
+margin: 10px; 
+text-align: center; 
+}
+
+#speakingTime:hover {
+background-color: #FFC300; 
 }
 </style>
