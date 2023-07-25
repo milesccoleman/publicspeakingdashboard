@@ -65,7 +65,7 @@ export default {
 			msg: 'Public Speaking Dashboard',
 			msg2: "An AI-powered tool to help you hone your public speaking skills.",
 			msg3: "",
-			wordsSpoken: '', 
+			wordsSpoken: 'START', 
 			output: 'Recognized Text',
 			workingOutpu: '',
 			workingTime: 0, 
@@ -434,7 +434,7 @@ export default {
 					text:'Rate of Speech',
 					font: {
 					family: 'Arial, sans-serif',
-					size: 25, 
+					size: 20, 
 					color: '#71c68b', 
 				},
 					xref: 'paper',
@@ -577,12 +577,12 @@ export default {
 					text:'Emotions in Words Spoken',
 					font: {
 					family: 'Arial, sans-serif',
-					size: 25, 
+					size: 20, 
 					color: '#FFC300', 
 				},
 					xref: 'paper',
 					automargin: true,
-					x: 0.5,
+					x: 0.8,
 					xanchor: 'center', 
 					y: 0.88, 
 					yanchor: 'top'
@@ -832,7 +832,7 @@ h3 {
 }
 ul {
   list-style-type: none;
-  padding: 0;
+  padding: 0px;
 }
 li {
   display: inline-block;
