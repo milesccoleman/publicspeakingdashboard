@@ -301,21 +301,26 @@ export default {
 			
 			if (this.time1 == true) {
 			this.timeDifference = Date.now() - this.initialTime;
+			this.dataNamer = this.timeDifference
+			var div = document.getElementById('timeHolder');
+			div.innerHTML = this.dataNamer 
+			console.log(this.dataNamer)
 			}
 			
 			if (this.time1 == false){
-			this.timeDifference = Date.now() - this.initialTime;
-			var middleTime = parseInt(document.getElementById("timeHolder").innerHTML);
-			this.timeDifference = this.timeDifference + middleTime
+				this.timeDifference = Date.now() - this.initialTime;
+				var middleTime = parseInt(document.getElementById("timeHolder").innerHTML);
+				console.log(middleTime)
+				this.timeDifference = this.timeDifference + middleTime 
+				this.time2 = true
 			}
 			
 			var formatted = convertTime(this.timeDifference);
 			document.getElementById('timer').innerHTML = '' + formatted;
 			this.workingTime = formatted; 
 			console.log(formatted)
-			this.dataNamer = this.timeDifference
-			var div = document.getElementById('timeHolder');
-			div.innerHTML = this.dataNamer
+			
+			
 			
 			this.timeElapsed = this.timeDifference
 			function convertTime(miliseconds) {
@@ -371,6 +376,12 @@ export default {
 			this.continuous = false
 			this.stop = true
 			this.time1 = false
+			if (this.time2 == true) {
+					this.dataNamer = this.timeDifference
+					var div2 = document.getElementById('timeHolder');
+					div2.innerHTML = this.dataNamer 
+					console.log(this.dataNamer)
+			}
 			this.visualizeData()
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
