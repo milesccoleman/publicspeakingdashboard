@@ -420,11 +420,14 @@ export default {
 					font: {
 					family: 'Arial, sans-serif',
 					size: 25, 
-					color: '#71c68b'
+					color: '#71c68b', 
 				},
 					xref: 'paper',
 					automargin: true,
 					x: 0.5,
+					xanchor: 'center', 
+					y: 0.88, 
+					yanchor: 'top'
 				},
 				autosize: true,
 					xaxis: {
@@ -487,7 +490,8 @@ color: #71c68b;
 }
 .chartWindow {
 position: relative;
-display: inline-block; 
+display: inline-block;
+width: 80%;  
 
 }
 .optionsButton  {
@@ -615,10 +619,7 @@ margin-bottom: 0px
 overflow: auto; 
 width: 80%; 
 display: inline-block;
-border: solid; 
-border-color: #36454f;
-border-width: thick;
-margin-top: 0px;
+margin-top: 3px;
 }
 
 #rawData {
