@@ -117,19 +117,21 @@ export default {
 	},
 	
 	created: function () {
-	//initiate speech recognition and ask for microphone permission
-		window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-		let recognition = new window.SpeechRecognition();
-		recognition.start()
+	console.log("Landing page loaded")
 	}, 
 
 	methods: {
 	
 		begin: function () {
+			//initiate speech recognition and ask for microphone permission
+			window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+			let recognition = new window.SpeechRecognition();
+			recognition.start()
 			this.show = false
 			this.show3 = false
 			this.msg2 = ''
-			this.msg3 = 'Select the data you would like to track, click start, and begin speaking.'
+			//this.msg3 = 'Select the data you would like to track, click start, and begin speaking.'
+			console.log("Dashboard page loaded")
 		},
 		
 // 		next: function () {
@@ -574,7 +576,7 @@ export default {
 				paper_bgcolor: "#222831",
 				plot_bgcolor: "#222831",
 				title: {
-					text:'Emotions in Words Spoken',
+					text:'  Emotions in Words Spoken',
 					font: {
 					family: 'Arial, sans-serif',
 					size: 20, 
@@ -582,7 +584,7 @@ export default {
 				},
 					xref: 'paper',
 					automargin: true,
-					x: 0.8,
+					x: 0.6,
 					xanchor: 'center', 
 					y: 0.88, 
 					yanchor: 'top'
