@@ -255,16 +255,9 @@ export default {
 						finalTranscript += transcript;
 						if (this.workingTime) {
 						this.workingOutput = transcript
-						this.getEmotionStats()
-						this.registerWPM()
+						this.renderData()
 						var node = document.createElement('li');
 						node.appendChild(document.createTextNode(" " + this.workingTime + ': ' + this.workingOutput));
-						if (this.textEmotionData) {
-						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + '"Angry":' + this.anger + "," + '"Fear":' + this.fear + "," + '"Excited":' + this.excitement + "," + '"Bored":' + this.boredom + "," + '"Sad":' + this.sadness + "," + '"Happy":' + this.happiness + "},"
-						var div = document.getElementById('rawData');
-						div.innerHTML += this.currentDataObject;
-						}
-						console.log(this.overallDataObject)
 						document.querySelector('ul').appendChild(node);
 						this.workingOutput = ""
 						var elem = document.getElementById('output');
@@ -394,7 +387,7 @@ export default {
 		//send transcript data to be evaluated as per emotional content
 			const pd = require('paralleldots' || paralleldots)
 			pd.apiKey = "hL7rOIhghKLZtrI6w04cFjxVvAOHQ7BiNhjMLAVnMPw";
-			pd.emotion(this.wordsSpoken,"en")
+			pd.emotion(this.workingOutput,"en")
 			.then((response) => {
 				let obj = JSON.parse(response)
 				this.textEmotionData = response.slice(1)
@@ -439,7 +432,31 @@ export default {
 		
 		hideData: function () {
 			document.getElementById("rawData").style.display="none"
+		},
+		
+		renderData: function() {
+		
+			const promise1 = new Promise((resolve, reject) => {
+				this.getEmotionStats()
+				this.registerWPM()
+				resolve('Data rendered!');
+				reject('Data render failed')
+			});
+
+			promise1.then(() => {
+				this.constructJSON()
+				this.visualizeData()
+				console.log("JSON and charts constructed");
+			});
 		}, 
+		
+		constructJSON: function() {
+						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + '"Angry":' + this.anger + "," + '"Fear":' + this.fear + "," + '"Excited":' + this.excitement + "," + '"Bored":' + this.boredom + "," + '"Sad":' + this.sadness + "," + '"Happy":' + this.happiness + "},"
+						var div = document.getElementById('rawData');
+						div.innerHTML += this.currentDataObject;
+						this.overallDataObject = document.getElementById("rawData").innerHTML
+						console.log(this.overallDataObject)
+		},  
 		
 		visualizeData: function () {
 				var overallRawData = document.getElementById("rawData").innerHTML
