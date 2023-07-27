@@ -30,6 +30,7 @@
 		<!--<br><button id="next" v-if="!show" v-on:click="next">Next</button>--><br>
 		<span id="rawData"></span>
 		<button v-if="!showTime" class="title" id="timer">{{ time }}</button>
+		<span v-if="!show3" id="volume-visualizer-wrapper"><button id="volume-visualizer"></button></span>
 		<ul v-if="!show3" id="output"></ul>
 		<span><button v-if="!show3" id="dataShowButton" v-on:click="unhideData">View Raw Data</button><button v-if="!show3" id="dataHideButton" v-on:click="hideData">Hide Raw Data</button></span>
 		
@@ -129,7 +130,11 @@ export default {
 			dataNamer: 0,
 			time1: true,
 			time2: false, 
-			placeHolderForTimeCheck: 0 
+			placeHolderForTimeCheck: 0,
+			volumeCallback: null, 
+			volumeInterval: null, 
+			volumeValue: 0, 
+			volumeNumber: 0 
 		}
 	},
 	
@@ -151,13 +156,57 @@ export default {
 			console.log("Dashboard page loaded")
 		},
 		
-// 		next: function () {
-// 			this.show2 = false
-// 			this.show4 = false
-// 			this.show = true
-// 			this.msg3 = ''
-// 			},
+		startVolumeMeter: function () {
+			(async () => {
+				const volumeVisualizer = document.getElementById('volume-visualizer');
+				// Initialize
+				try {
+					const audioStream = await navigator.mediaDevices.getUserMedia({
+						audio: {
+							echoCancellation: true
+						}
+			});
+
+		const audioContext = new AudioContext();
+		const audioSource = audioContext.createMediaStreamSource(audioStream);
+		const analyser = audioContext.createAnalyser();
+		analyser.fftSize = 512;
+		analyser.minDecibels = -127;
+		analyser.maxDecibels = 0;
+		analyser.smoothingTimeConstant = 0.4;
+		audioSource.connect(analyser);
+		const volumes = new Uint8Array(analyser.frequencyBinCount);
+		this.volumeCallback = () => {
+			analyser.getByteFrequencyData(volumes);
+			let volumeSum = 0;
+				for(const volume of volumes)
+					volumeSum += volume;
+					const averageVolume = volumeSum / volumes.length;
+					// Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
+					volumeVisualizer.style.setProperty('--volume', (averageVolume * 100 / 127) + '%');
+					this.volumeNumber = averageVolume
+		};
+		} catch(e) {
+			console.error('Failed to initialize volume visualizer, simulating instead...', e);
+			let lastVolume = 50;
+		this.volumeCallback = () => {
+			const volume = Math.min(Math.max(Math.random() * 100, 0.8 * lastVolume), 1.2 * lastVolume);
+			lastVolume = volume;
+			volumeVisualizer.style.setProperty('--volume', volume + '%');
+		};
+		}
+		// Use
+
+		if(this.volumeCallback !== null && this.volumeInterval === null)
+			this.volumeInterval = setInterval(this.volumeCallback, 100);
+
+		})();
+		},
 		
+		setVolume: function () {
+			this.volumeValue = this.volumeNumber
+		}, 	
+
 		selectWPM: function () {
 			
 			if (this.WPMSelected == false) {
@@ -255,37 +304,34 @@ export default {
 						finalTranscript += transcript;
 						if (this.workingTime) {
 						this.workingOutput = transcript
-						this.renderData()
 						var node = document.createElement('li');
 						node.appendChild(document.createTextNode(" " + this.workingTime + ': ' + this.workingOutput));
 						document.querySelector('ul').appendChild(node);
-						this.workingOutput = ""
 						var elem = document.getElementById('output');
 						elem.scrollTop = elem.scrollHeight;
+						console.log(this.workingOutput)
+						this.renderData()
 						
-			}
-					} else {
-						interimTranscript += transcript;
 					}
+				} else {
+				interimTranscript += transcript;
 				}
+			}
 				this.wordsSpoken = finalTranscript
 				this.output =  this.wordsSpoken += interimTranscript
 				this.wordCount = this.countWords(this.output)
 				this.totalWords = this.wordCount
-				
-				
-				
-				
-			}
+		},
 			recognition.start()
 			
 				if ((this.textEmotionSelected == true || this.WPMSelected == true) || (this.voiceEmotionSelected == true || this.faceEmotionSelected == true))	 {
 					this.msg3 = ""
 					if (this.stop == false) {
 						this.showTime = false
-						console.log("app started")
 						this.initialTime = Date.now();
 						this.grabTimeInterval = window.setInterval(this.grabTime, 1000)
+						this.startVolumeMeter()
+						console.log("app started")
 					} 
 					if (this.stop == true) {
 						clearInterval(this.grabTimeInterval)
@@ -411,15 +457,18 @@ export default {
 			this.stop = true
 			this.time1 = false
 			if (this.time2 == true) {
-					this.dataNamer = this.timeDifference
-					var div2 = document.getElementById('timeHolder');
-					div2.innerHTML = this.dataNamer 
-					console.log(this.dataNamer)
+				this.dataNamer = this.timeDifference
+				var div2 = document.getElementById('timeHolder');
+				div2.innerHTML = this.dataNamer 
+				console.log(this.dataNamer)
+			}
+			if(this.volumeInterval !== null) {
+				clearInterval(this.volumeInterval);
+				this.volumeInterval = null;
 			}
 			this.visualizeData()
 			this.initiateVoiceControl()
 			clearInterval(this.grabTimeInterval)
-			
 		}, 
 	
 		reset: function () {
@@ -437,6 +486,7 @@ export default {
 		renderData: function() {
 		
 			const promise1 = new Promise((resolve, reject) => {
+				this.setVolume()
 				this.getEmotionStats()
 				this.registerWPM()
 				resolve('Data rendered!');
@@ -451,7 +501,7 @@ export default {
 		}, 
 		
 		constructJSON: function() {
-						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + '"Angry":' + this.anger + "," + '"Fear":' + this.fear + "," + '"Excited":' + this.excitement + "," + '"Bored":' + this.boredom + "," + '"Sad":' + this.sadness + "," + '"Happy":' + this.happiness + "},"
+						this.currentDataObject = '{"time":' + '"' + this.workingTime + '"' + "," + '"wpm":' + '"' + this.wpm + '"' + "," + '"content":' + '"' + this.workingOutput + '"' + "," + '"Angry":' + this.anger + "," + '"Fear":' + this.fear + "," + '"Excited":' + this.excitement + "," + '"Bored":' + this.boredom + "," + '"Sad":' + this.sadness + "," + '"Happy":' + this.happiness + "," + '"volume":' + this.volumeValue + "},"
 						var div = document.getElementById('rawData');
 						div.innerHTML += this.currentDataObject;
 						this.overallDataObject = document.getElementById("rawData").innerHTML
@@ -911,10 +961,8 @@ font-family: 'LCD', sans-serif;
 height: 100px; 
 width: 80%; 
 border: none; 
-margin: 10px; 
 font-weight: bold; 
 text-align: center; 
-padding: 20px;
 margin-bottom: 0px;
 }
 
@@ -922,10 +970,11 @@ margin-bottom: 0px;
 background-color: #123b52; 
 color: white; 
 display: none; 
+margin-bottom: 0px;
 }
 
 #speakingTime{
-background-color: #8d79f4; 
+background-color: #FFC300; 
 outline: none;
 scroll-behavior: smooth;
 height: 50px; 
@@ -939,6 +988,43 @@ text-align: center;
 }
 
 #speakingTime:hover {
-background-color: #FFC300; 
+background-color: #8d79f4; 
 }
+
+#volume-visualizer-wrapper {
+  background-color: #222831;
+  margin-top: 0px;
+  padding: 0px;
+  margin-bottom: 0px;
+  width: 80%;
+  display: inline-block; 
+  padding-bottom: 10px;
+}
+
+#volume-visualizer {
+  --volume: 0%;
+  position: relative;
+  height: 10px;
+  background-color: #222831;
+  margin-top: 0px;
+  left: -70px;
+  margin-bottom: 0px;
+  width: 80%;
+  border: none; 
+  display: inline-block; 
+  
+}
+
+#volume-visualizer::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   width: var(--volume);
+   background-color: #c300ff;
+   transition: width 100ms linear;
+}
+
+
 </style>
