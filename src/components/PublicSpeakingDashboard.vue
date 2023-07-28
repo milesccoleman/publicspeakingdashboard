@@ -13,7 +13,7 @@
 		<span><span v-if="!show3" id="dropdownWrapper">
 		<label for="speakingTime" alt="Choose Desired Speech Length:"></label>
 			<select name="speakingTime" id="speakingTime">
-				<option value="nope" selected>Choose Target Speaking Time (Will Give 30 and 15 Second Warnings)</option> 
+				<option value="nope" selected>Choose Target Speaking Time - (Gives 30 and 15 Sec Warnings Before Selected Time)</option> 
 				<option value="60000">1 Min</option> 
 				<option value="180000">3 Min</option> 
 				<option value="300000">5 Min</option> 
@@ -37,36 +37,10 @@
 		<!--FEEDBACK SECTION-->
 		
 		<!--WPM-->
-		<span v-if="!showWPM" id="wpmChart" ></span>
-		<span v-if="!showTextEmotion" id="textEmotionChart" ></span>
+		<span v-if="!showWPM" id="wpmChart"></span>
+		<span v-if="!showVolume" id="volumeChart"></span>
+		<span v-if="!showTextEmotion" id="textEmotionChart"></span>
 		<!--<p v-if="!showWPM" id="wpm">{{ wpm }} <br><b>Overall Average Words Per Minute</b></p><br>-->
-		<span id="voiceAndFace">
-			
-			<!--<p  v-if="!showTextEmotion" class="title" id="textEmotion">
-				Anger: {{ this.anger }} <br>
-				Fear: {{ this.fear}} <br>
-				Excitement: {{ this.excitement }} <br>
-				Boredom: {{ this.boredom}} <br>
-				Sadness: {{ this.sadness}} <br>
-				Happiness: {{ this.happiness }}<br>
-				<img class="chartWindow" src="textEmotions.png"><br>
-				<b>Text Emotion (out of 100)</b>
-			</p>-->	
-			<p v-if="!showVoiceEmotion" class="title" id="voiceEmotion">
-				<img class="chartWindow" id="voiceEmotion" src="faceEmotions.png"><br>
-				<b>Voice Analysis Placeholder</b>
-				<!--add waveform-->
-			</p>
-			<p v-if="!showFaceEmotion" class="title" id="faceEmotion">
-				<img class="chartWindow" id="faceEmotion" src="faceEmotions.png"><br>
-				<b>Face Analysis Placeholder</b>
-				<!--add video feedback-->
-			</p>
-				<!--Words Per Minute, Filler Words, and Volume SECTION-->
-				<!--TODO: Filler Words-->
-				<!--TODO: Dynamics - attack - decay - volume-->		
-		</span>
-
   </div>
 </template>
 
@@ -134,7 +108,8 @@ export default {
 			volumeCallback: null, 
 			volumeInterval: null, 
 			volumeValue: 0, 
-			volumeNumber: 0 
+			volumeNumber: 0, 
+			showVolume: true 
 		}
 	},
 	
@@ -185,6 +160,7 @@ export default {
 					// Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
 					volumeVisualizer.style.setProperty('--volume', (averageVolume * 100 / 127) + '%');
 					this.volumeNumber = averageVolume
+					this.showVolume = false
 		};
 		} catch(e) {
 			console.error('Failed to initialize volume visualizer, simulating instead...', e);
@@ -204,7 +180,7 @@ export default {
 		},
 		
 		setVolume: function () {
-			this.volumeValue = this.volumeNumber
+			this.volumeValue = Math.round(this.volumeNumber)
 		}, 	
 
 		selectWPM: function () {
@@ -356,7 +332,6 @@ export default {
 			this.dataNamer = this.timeDifference
 			var div = document.getElementById('timeHolder');
 			div.innerHTML = this.dataNamer
-			this.checkForTargetTime() 
 			console.log(this.dataNamer)
 			}
 			
@@ -365,7 +340,6 @@ export default {
 				var middleTime = parseInt(document.getElementById("timeHolder").innerHTML);
 				console.log(middleTime)
 				this.timeDifference = this.timeDifference + middleTime
-				this.checkForTargetTime() 
 				this.time2 = true
 			}
 			
@@ -373,26 +347,18 @@ export default {
 			document.getElementById('timer').innerHTML = '' + formatted;
 			this.workingTime = formatted; 
 			console.log(formatted)
-			
-			this.timeElapsed = this.timeDifference
-			this.placeHolderForTimeCheck = this.timeDifference
-			
-			var selectedTime = document.getElementById("speakingTime").value;
-			
-			var selectedTimeFifteen = selectedTime - 15000
-			
-			var selectedTimeThirty = selectedTime - 30000
-			
-			var element = document.getElementById("timer");
-			
+				this.timeElapsed = this.timeDifference
+				this.placeHolderForTimeCheck = this.timeDifference
+				var selectedTime = document.getElementById("speakingTime").value;
+				var selectedTimeFifteen = selectedTime - 15000
+				var selectedTimeThirty = selectedTime - 30000
+				var element = document.getElementById("timer");
 			if (this.placeHolderForTimeCheck >= selectedTimeThirty) {
 				element.style.backgroundColor = "green";
 			}
-			
 			if (this.placeHolderForTimeCheck >= selectedTimeFifteen) {
 				element.style.backgroundColor = "yellow";
 			}
-			
 			if (this.placeHolderForTimeCheck >= selectedTime) {
 				element.style.backgroundColor = "red";
 			}
@@ -408,7 +374,6 @@ export default {
 				minutes = "0" + minutes 
 				}
 				return minutes + ':' + seconds;
-
 			}
 		},
 		
@@ -417,12 +382,6 @@ export default {
 			const arr = str.split(' ');
 			return arr.filter(word => word !== '').length;
 		}, 
-		
-		checkForTargetTime: function () {
-			
-			
-			
-		},
 		
 		registerWPM: function () {
 		//calculate number of words per minute--at one second intervals
@@ -517,10 +476,11 @@ export default {
 			//Words Per Minute
 			if (this.showWPM == false) {
 				
-				let trace1 = {
+				let wordsPerMinute = {
 					x: [],
 					y: [],
-					mode: "lines", 
+					mode: "lines",
+					name: 'Words Per Minute', 
 					line: {
 						color: '#f48d79',
 						width: 2
@@ -528,8 +488,8 @@ export default {
 				};
 				
 				data.forEach(function(val) {
-				trace1.x.push(val["time"]);
-				trace1.y.push(val["wpm"]);
+				wordsPerMinute.x.push(val["time"]);
+				wordsPerMinute.y.push(val["wpm"]);
 				});
 				
 				var layout = {
@@ -587,7 +547,84 @@ export default {
 				};
 
 				var WPMChart = document.getElementById('wpmChart');
-				Plotly.newPlot(WPMChart, [trace1], layout);
+				Plotly.newPlot(WPMChart, [wordsPerMinute], layout);
+			}
+			
+			//Volume
+			if (this.showVolume == false) {
+				
+				let volume = {
+					x: [],
+					y: [],
+					mode: "lines",
+					name: 'Volume', 
+					line: {
+						color: '#40D0E0',
+						width: 2
+					}
+				};
+				
+				data.forEach(function(val) {
+				volume.x.push(val["time"]);
+				volume.y.push(val["volume"]);
+				});
+				
+				var layout3 = {
+				paper_bgcolor: "#222831",
+				plot_bgcolor: "#222831",
+				title: {
+					text:'Voice Projection',
+					font: {
+					family: 'Arial, sans-serif',
+					size: 20, 
+					color: '#c300ff', 
+				},
+					xref: 'paper',
+					automargin: true,
+					x: 0.5,
+					xanchor: 'center', 
+					y: 0.88, 
+					yanchor: 'top'
+				},
+				autosize: true,
+					xaxis: {
+						tickfont : {
+							size : 18,
+							color : '#c300ff'
+						},
+						tickcolor: '#c300ff',
+						title: {
+							text: 'Time',
+							font: {
+							family: 'Arial, sans-serif',
+							size: 18,
+							color: '#c300ff',
+							}
+						},
+					},
+					yaxis: {
+						margin: {
+							autoexpand: true,
+						},
+						automargin: true,
+						tickfont : {
+							size : 18,
+							color : '#c300ff'
+						},
+						tickcolor: '#c300ff',
+						title: {
+						text: 'Volume',
+							font: {
+							family: 'Arial, sans-serif',
+							size: 18,
+							color: '#c300ff' 
+							}
+						}
+					}
+				};
+
+				var volumeChart = document.getElementById('volumeChart');
+				Plotly.newPlot(volumeChart, [volume], layout3);
 			}
 			
 			
@@ -644,7 +681,7 @@ export default {
 					mode: "lines",
 					name: 'Sadness', 
 					line: {
-						color: '#FF5733',
+						color: '#85A1F2',
 						width: 2
 					}
 				};
@@ -683,7 +720,7 @@ export default {
 					font: {
 					family: 'Arial, sans-serif',
 					size: 20, 
-					color: '#FFC300', 
+					color: '#fdfd96', 
 				},
 					xref: 'paper',
 					automargin: true,
@@ -696,7 +733,7 @@ export default {
 					xaxis: {
 						tickfont : {
 							size : 16,
-							color : '#FFC300'
+							color : '#fdfd96'
 						},
 						tickcolor: '#36454f',
 						title: {
@@ -704,7 +741,7 @@ export default {
 							font: {
 							family: 'Arial, sans-serif',
 							size: 18,
-							color: '#FFC300',
+							color: '#fdfd96',
 							}
 						},
 					},
@@ -715,15 +752,15 @@ export default {
 						automargin: true,
 						tickfont : {
 							size : 16,
-							color : '#FFC300'
+							color : '#fdfd96'
 						},
-						tickcolor: '#36454f',
+						tickcolor: '#fdfd96',
 						title: {
 						text: 'Emotions',
 							font: {
 							family: 'Arial, sans-serif',
 							size: 18,
-							color: '#FFC300' 
+							color: '#fdfd96' 
 							}
 						}
 					}
@@ -783,7 +820,7 @@ font-size: 25px;
 }
 
 #begin {
-background-color: #7766c6; 
+background-color: #c300ff;
 border: none; 
 height: 50px; 
 width: 100px; 
@@ -796,7 +833,7 @@ margin-bottom: -20px;
 }
 
 #begin:hover {
-background-color: #FFC300; 
+background-color: #fdfd96; 
 }
 
 #start {
@@ -885,6 +922,13 @@ margin-top: 3px;
 margin-bottom: 0px; 
 }
 
+#volumeChart {
+overflow: auto; 
+width: 80%; 
+display: inline-block;
+margin-top: -3px; 
+}
+
 #textEmotionChart {
 overflow: auto; 
 width: 80%; 
@@ -953,6 +997,7 @@ margin-bottom: -20px;
 -webkit-filter: invert(1);
    filter: invert(1);
 }
+
 #timer {
 background: #222831; 
 color: white; 
@@ -974,7 +1019,7 @@ margin-bottom: 0px;
 }
 
 #speakingTime{
-background-color: #FFC300; 
+background-color: #00ffc3; 
 outline: none;
 scroll-behavior: smooth;
 height: 50px; 
@@ -985,10 +1030,11 @@ font-family: Arial, sans-serif;
 font-size: 21px; 
 margin: 10px; 
 text-align: center; 
+border: none; 
 }
 
 #speakingTime:hover {
-background-color: #8d79f4; 
+background-color: #c300ff; 
 }
 
 #volume-visualizer-wrapper {
@@ -1007,9 +1053,8 @@ background-color: #8d79f4;
   height: 10px;
   background-color: #222831;
   margin-top: 0px;
-  left: -70px;
   margin-bottom: 0px;
-  width: 80%;
+  width: 100%;
   border: none; 
   display: inline-block; 
   
